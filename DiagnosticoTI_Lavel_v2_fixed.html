@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico TI – Lavel Maquinaria</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --red: #D0021B;
+    --dark: #1a1a2e;
+    --dark2: #16213e;
+    --navy: #0f3460;
+    --blue: #1a4a8a;
+    --blue-light: #2563eb;
+    --accent: #e8a020;
+    --gray: #f4f6fb;
+    --gray2: #e8edf5;
+    --text: #1e293b;
+    --text2: #475569;
+    --white: #ffffff;
+    --crit: #dc2626;
+    --crit-bg: #fef2f2;
+    --high: #ea580c;
+    --high-bg: #fff7ed;
+    --med: #ca8a04;
+    --med-bg: #fefce8;
+    --low: #16a34a;
+    --low-bg: #f0fdf4;
+    --border: #cbd5e1;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Inter',sans-serif; background:#f0f4f8; color:var(--text); }
+
+  /* NAV */
+  nav {
+    position:sticky; top:0; z-index:1000;
+    background:var(--dark2);
+    display:flex; align-items:center; gap:6px;
+    padding:0 24px;
+    box-shadow:0 2px 16px rgba(0,0,0,.4);
+    height:52px;
+  }
+  nav .logo-nav img { height:34px; }
+  nav .sep { width:1px; height:28px; background:rgba(255,255,255,.15); margin:0 10px; }
+  nav a {
+    color:rgba(255,255,255,.75); text-decoration:none;
+    font-family:'Montserrat',sans-serif; font-size:.72rem; font-weight:600;
+    letter-spacing:.04em; text-transform:uppercase;
+    padding:6px 12px; border-radius:6px;
+    transition:all .2s;
+  }
+  nav a:hover, nav a.active { color:#fff; background:rgba(255,255,255,.1); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--navy) 60%, #1a4a8a 100%);
+    color:#fff;
+    padding: 56px 40px 48px;
+    display:flex; align-items:center; gap:40px;
+    position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(26,74,138,.5) 0%, transparent 60%);
+  }
+  .hero-logo {
+    background:#fff;
+    border-radius:16px;
+    padding:14px 20px;
+    box-shadow:0 8px 32px rgba(0,0,0,.35);
+    flex-shrink:0;
+    position:relative;
+  }
+  .hero-logo img { height:70px; display:block; }
+  .hero-content { position:relative; }
+  .hero-badge {
+    display:inline-block;
+    background:rgba(232,160,32,.2); border:1px solid var(--accent);
+    color:var(--accent); font-family:'Montserrat',sans-serif;
+    font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    padding:4px 12px; border-radius:20px; margin-bottom:12px;
+  }
+  .hero h1 {
+    font-family:'Montserrat',sans-serif;
+    font-size:2.4rem; font-weight:800; line-height:1.15;
+    margin-bottom:8px;
+  }
+  .hero h1 span { color:var(--accent); }
+  .hero p { color:rgba(255,255,255,.7); font-size:.95rem; max-width:540px; margin-bottom:20px; }
+  .hero-stats {
+    display:flex; gap:20px; flex-wrap:wrap;
+  }
+  .hero-stat {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+    border-radius:10px; padding:12px 20px; text-align:center;
+  }
+  .hero-stat .num {
+    font-family:'Montserrat',sans-serif; font-size:1.6rem; font-weight:800; color:var(--accent);
+  }
+  .hero-stat .lbl { font-size:.72rem; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.06em; }
+
+  /* SECTIONS */
+  section { padding:48px 40px; max-width:1400px; margin:0 auto; }
+  .section-title {
+    font-family:'Montserrat',sans-serif;
+    font-size:1.35rem; font-weight:800; color:var(--dark);
+    margin-bottom:4px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-title .icon { font-size:1.5rem; }
+  .section-sub {
+    color:var(--text2); font-size:.875rem; margin-bottom:28px;
+    padding-bottom:16px; border-bottom:2px solid var(--gray2);
+  }
+
+  /* SUMMARY CARDS */
+  .cards-row {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;
+    margin-bottom:36px;
+  }
+  .card {
+    background:#fff; border-radius:14px; padding:20px 22px;
+    box-shadow:0 2px 8px rgba(0,0,0,.06); border:1px solid var(--border);
+    display:flex; flex-direction:column; gap:6px;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+  .card .c-label { font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text2); }
+  .card .c-val { font-family:'Montserrat',sans-serif; font-size:2rem; font-weight:800; }
+  .card .c-sub { font-size:.78rem; color:var(--text2); }
+  .card.red { border-left:4px solid var(--crit); } .card.red .c-val { color:var(--crit); }
+  .card.orange { border-left:4px solid var(--high); } .card.orange .c-val { color:var(--high); }
+  .card.yellow { border-left:4px solid var(--med); } .card.yellow .c-val { color:var(--med); }
+  .card.green { border-left:4px solid var(--low); } .card.green .c-val { color:var(--low); }
+  .card.blue { border-left:4px solid var(--blue-light); } .card.blue .c-val { color:var(--blue-light); }
+  .card.navy { border-left:4px solid var(--navy); } .card.navy .c-val { color:var(--navy); }
+
+  /* RISK MATRIX TABLE */
+  .risk-table-wrap {
+    background:#fff; border-radius:16px; overflow:hidden;
+    box-shadow:0 2px 12px rgba(0,0,0,.07); border:1px solid var(--border);
+    margin-bottom:36px;
+  }
+  table.risk-tbl { width:100%; border-collapse:collapse; font-size:.82rem; }
+  table.risk-tbl thead tr {
+    background:linear-gradient(90deg,var(--navy),var(--blue));
+    color:#fff;
+  }
+  table.risk-tbl th {
+    padding:13px 14px; text-align:left;
+    font-family:'Montserrat',sans-serif; font-size:.72rem; font-weight:700; letter-spacing:.04em;
+    white-space:nowrap;
+  }
+  table.risk-tbl td {
+    padding:11px 14px; border-bottom:1px solid var(--gray2);
+    vertical-align:top; line-height:1.45;
+  }
+  table.risk-tbl tbody tr:hover td { background:var(--gray); }
+  table.risk-tbl tbody tr:last-child td { border-bottom:none; }
+  .badge {
+    display:inline-block; padding:3px 10px; border-radius:20px;
+    font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+  }
+  .badge-crit { background:var(--crit-bg); color:var(--crit); border:1px solid #fca5a5; }
+  .badge-high { background:var(--high-bg); color:var(--high); border:1px solid #fdba74; }
+  .badge-med  { background:var(--med-bg);  color:var(--med);  border:1px solid #fde047; }
+  .badge-low  { background:var(--low-bg);  color:var(--low);  border:1px solid #86efac; }
+  .score {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:50%;
+    font-family:'Montserrat',sans-serif; font-weight:800; font-size:.95rem;
+  }
+  .score-crit { background:var(--crit-bg); color:var(--crit); border:2px solid var(--crit); }
+  .score-high { background:var(--high-bg); color:var(--high); border:2px solid var(--high); }
+  .score-med  { background:var(--med-bg);  color:var(--med);  border:2px solid var(--med); }
+  .score-low  { background:var(--low-bg);  color:var(--low);  border:2px solid var(--low); }
+
+  /* RISK HEATMAP */
+  .heatmap-wrap {
+    background:#fff; border-radius:16px; padding:28px;
+    box-shadow:0 2px 12px rgba(0,0,0,.07); border:1px solid var(--border);
+    margin-bottom:36px;
+  }
+  .heatmap-title {
+    font-family:'Montserrat',sans-serif; font-size:.95rem; font-weight:700;
+    margin-bottom:16px; color:var(--navy);
+  }
+  .heatmap-grid {
+    display:grid;
+    grid-template-columns:40px repeat(5,1fr);
+    grid-template-rows:repeat(5,1fr) 40px;
+    gap:4px;
+    width:100%; max-width:440px;
+  }
+  .hm-cell {
+    border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-family:'Montserrat',sans-serif; font-size:.72rem; font-weight:700;
+    min-height:48px; cursor:default;
+    transition:transform .15s;
+  }
+  .hm-cell:hover { transform:scale(1.06); z-index:2; }
+  .hm-label-y {
+    display:flex; align-items:center; justify-content:flex-end;
+    padding-right:6px; font-size:.7rem; color:var(--text2); font-weight:600;
+  }
+  .hm-label-x {
+    display:flex; align-items:flex-start; justify-content:center;
+    padding-top:4px; font-size:.7rem; color:var(--text2); font-weight:600;
+  }
+  .hm-corner { /* empty top-left corner */ }
+
+  /* ROADMAP */
+  .roadmap-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0; position:relative;
+    background:#fff; border-radius:16px; overflow:hidden;
+    box-shadow:0 2px 12px rgba(0,0,0,.07); border:1px solid var(--border);
+    margin-bottom:36px;
+  }
+  .rm-quarter {
+    border-right:1px solid var(--border);
+    padding:0;
+  }
+  .rm-quarter:last-child { border-right:none; }
+  .rm-header {
+    background:linear-gradient(135deg,var(--navy),var(--blue-light));
+    color:#fff; padding:14px 16px;
+    font-family:'Montserrat',sans-serif; font-size:.82rem; font-weight:700;
+  }
+  .rm-header .q-num { font-size:1.3rem; font-weight:800; }
+  .rm-body { padding:14px; display:flex; flex-direction:column; gap:8px; min-height:220px; }
+  .rm-item {
+    background:var(--gray); border-radius:8px; padding:8px 10px;
+    border-left:3px solid var(--blue-light);
+    font-size:.78rem; line-height:1.4;
+  }
+  .rm-item.crit { border-left-color:var(--crit); background:var(--crit-bg); }
+  .rm-item.high { border-left-color:var(--high); background:var(--high-bg); }
+  .rm-item.med  { border-left-color:var(--med);  background:var(--med-bg);  }
+  .rm-item.low  { border-left-color:var(--low);  background:var(--low-bg);  }
+  .rm-item strong { display:block; font-size:.72rem; font-weight:700; margin-bottom:2px; }
+  .rm-tag {
+    display:inline-block; padding:1px 7px; border-radius:10px;
+    font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
+    margin-top:4px;
+  }
+  .rm-tag.crit { background:var(--crit); color:#fff; }
+  .rm-tag.high { background:var(--high); color:#fff; }
+  .rm-tag.med  { background:var(--med);  color:#fff; }
+  .rm-tag.low  { background:var(--low);  color:#fff; }
+
+  /* INV TABLES */
+  .inv-tabs {
+    display:flex; gap:6px; margin-bottom:0; flex-wrap:wrap;
+  }
+  .tab-btn {
+    padding:8px 18px; border-radius:8px 8px 0 0;
+    border:1px solid var(--border); border-bottom:none;
+    background:var(--gray2); cursor:pointer;
+    font-family:'Montserrat',sans-serif; font-size:.75rem; font-weight:700;
+    color:var(--text2); transition:all .2s;
+  }
+  .tab-btn.active { background:#fff; color:var(--navy); border-bottom:2px solid #fff; margin-bottom:-1px; }
+  .tab-content {
+    display:none; background:#fff; border-radius:0 12px 12px 12px;
+    border:1px solid var(--border); overflow:hidden;
+    box-shadow:0 2px 12px rgba(0,0,0,.06);
+  }
+  .tab-content.active { display:block; }
+
+  .inv-search {
+    padding:14px 16px; border-bottom:1px solid var(--gray2);
+    display:flex; gap:10px; align-items:center;
+  }
+  .inv-search input {
+    border:1px solid var(--border); border-radius:8px;
+    padding:7px 12px; font-size:.83rem; font-family:'Inter',sans-serif;
+    flex:1; outline:none; transition:border .2s;
+  }
+  .inv-search input:focus { border-color:var(--blue-light); }
+  .inv-search span { font-size:.78rem; color:var(--text2); white-space:nowrap; }
+
+  .inv-table-wrap { max-height:440px; overflow-y:auto; }
+  table.inv-tbl { width:100%; border-collapse:collapse; font-size:.8rem; }
+  table.inv-tbl thead tr {
+    background:var(--gray); position:sticky; top:0; z-index:1;
+  }
+  table.inv-tbl th {
+    padding:10px 12px; text-align:left;
+    font-family:'Montserrat',sans-serif; font-size:.7rem; font-weight:700;
+    color:var(--navy); border-bottom:2px solid var(--border); white-space:nowrap;
+  }
+  table.inv-tbl td {
+    padding:9px 12px; border-bottom:1px solid var(--gray2); color:var(--text);
+  }
+  table.inv-tbl tbody tr:hover td { background:var(--gray); }
+  .tag-disp {
+    display:inline-block; padding:2px 8px; border-radius:10px; font-size:.68rem; font-weight:700;
+  }
+  .tag-yes { background:#dcfce7; color:#15803d; }
+  .tag-no  { background:#fee2e2; color:#dc2626; }
+
+  /* FOOTER */
+  footer {
+    background:var(--dark); color:rgba(255,255,255,.5);
+    text-align:center; padding:24px; font-size:.78rem;
+    margin-top:20px;
+  }
+  footer span { color:var(--accent); font-weight:600; }
+
+  /* RESPONSIVE */
+  @media(max-width:900px) {
+    .hero { flex-direction:column; padding:36px 20px; }
+    section { padding:32px 16px; }
+    nav a { font-size:.65rem; padding:5px 8px; }
+    .roadmap-grid { grid-template-columns:1fr 1fr; }
+    table.risk-tbl { font-size:.75rem; }
+  }
+  @media(max-width:600px) {
+    .roadmap-grid { grid-template-columns:1fr; }
+    .heatmap-grid { max-width:300px; }
+  }
+
+  /* SCROLL ANIMATION */
+  .fade-in { opacity:0; transform:translateY(24px); transition:opacity .5s, transform .5s; }
+  .fade-in.visible { opacity:1; transform:none; }
+
+  /* section bg alternation */
+  .section-wrap { background:transparent; }
+  .section-wrap.alt { background:#fff; }
+  .section-wrap.alt section { background:transparent; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo-nav"><img src="data:image/png;base64,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" alt="Lavel Maquinaria"></div>
+  <div class="sep"></div>
+  <a href="#riesgo" class="active">Matriz de Riesgo</a>
+  <a href="#heatmap">Mapa de Calor</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#inventario">Inventarios</a>
+  <a href="#licencias">Licencias</a>
+  <a href="#celulares">Líneas</a>
+  <a href="#contingencias">Contingencias</a>
+  <a href="#proyectos">Proyectos</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">
+    <img src="data:image/png;base64,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" alt="Lavel Maquinaria">
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">📋 Diagnóstico Tecnológico 2025–2026</div>
+    <h1>Plan de Gestión TI<br><span>Lavel Maquinaria</span></h1>
+    <p>Matriz de riesgo, roadmap de implementación e inventario tecnológico consolidado del área de Tecnología de la Información.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">10</div><div class="lbl">Riesgos Identificados</div></div>
+      <div class="hero-stat"><div class="num">4</div><div class="lbl">Críticos / Altos</div></div>
+      <div class="hero-stat"><div class="num">52</div><div class="lbl">Usuarios M365</div></div>
+      <div class="hero-stat"><div class="num">248</div><div class="lbl">Equipos en Inventario</div></div>
+      <div class="hero-stat"><div class="num">47</div><div class="lbl">Líneas Activas</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESUMEN KPI CARDS -->
+<div class="section-wrap">
+<section id="kpi" class="fade-in">
+  <div class="section-title"><span class="icon">📊</span> Resumen Ejecutivo</div>
+  <div class="section-sub">Indicadores clave del diagnóstico TI actual de Lavel Maquinaria</div>
+  <div class="cards-row">
+    <div class="card red"><div class="c-label">Riesgos Críticos</div><div class="c-val">4</div><div class="c-sub">Nivel 15–25 · Acción inmediata</div></div>
+    <div class="card orange"><div class="c-label">Riesgos Altos</div><div class="c-val">4</div><div class="c-sub">Nivel 10–14 · Prioridad alta</div></div>
+    <div class="card yellow"><div class="c-label">Riesgos Medios</div><div class="c-val">2</div><div class="c-sub">Nivel 5–9 · Monitoreo activo</div></div>
+    <div class="card blue"><div class="c-label">Notebooks</div><div class="c-val">44</div><div class="c-sub">4 disponibles sin asignar</div></div>
+    <div class="card navy"><div class="c-label">PCs Escritorio</div><div class="c-val">27</div><div class="c-sub">2 no operativos</div></div>
+    <div class="card green"><div class="c-label">Licencias M365</div><div class="c-val">81</div><div class="c-sub">Faltan 2 · Revisar crack</div></div>
+  </div>
+</section>
+</div>
+
+<!-- MATRIZ DE RIESGO -->
+<div class="section-wrap alt">
+<section id="riesgo" class="fade-in">
+  <div class="section-title"><span class="icon">⚠️</span> Matriz de Riesgo TI</div>
+  <div class="section-sub">Evaluación de riesgos por Probabilidad (1–5) × Impacto (1–5). Score ≥15 = Crítico · 10–14 = Alto · 5–9 = Medio · &lt;5 = Bajo</div>
+  <div class="risk-table-wrap">
+    <table class="risk-tbl">
+      <thead>
+        <tr>
+          <th style="width:36px">N°</th>
+          <th>Riesgo Identificado</th>
+          <th>Área Afectada</th>
+          <th style="text-align:center">Prob.</th>
+          <th style="text-align:center">Impacto</th>
+          <th style="text-align:center">Score</th>
+          <th style="text-align:center">Criticidad</th>
+          <th>Controles / Mitigación</th>
+          <th>Responsable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>1</b></td>
+          <td><b>Ausencia de sistema de tickets (ITSM)</b><br><span style="color:#64748b;font-size:.75rem">Sin trazabilidad de incidencias entre departamentos</span></td>
+          <td>Todos los departamentos</td>
+          <td style="text-align:center">4</td><td style="text-align:center">4</td>
+          <td style="text-align:center"><span class="score score-crit">16</span></td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>Implementar Freshdesk / Zammad / Jira SD. Definir SLAs por categoría.</td>
+          <td>Jefe de TI</td>
+        </tr>
+        <tr>
+          <td><b>2</b></td>
+          <td><b>Degradación frecuente del ISP (internet)</b><br><span style="color:#64748b;font-size:.75rem">Caídas recurrentes afectan operaciones críticas</span></td>
+          <td>Conectividad / Operaciones</td>
+          <td style="text-align:center">5</td><td style="text-align:center">4</td>
+          <td style="text-align:center"><span class="score score-crit">20</span></td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>Enlace redundante con failover automático. Monitoreo 24/7 con Zabbix/PRTG.</td>
+          <td>Infraestructura TI</td>
+        </tr>
+        <tr>
+          <td><b>3</b></td>
+          <td><b>Sin trazabilidad de insumos para periféricos</b><br><span style="color:#64748b;font-size:.75rem">Tóner, cartuchos e insumos sin control de stock</span></td>
+          <td>Administración / Inventario TI</td>
+          <td style="text-align:center">3</td><td style="text-align:center">3</td>
+          <td style="text-align:center"><span class="score score-med">9</span></td>
+          <td style="text-align:center"><span class="badge badge-med">Medio</span></td>
+          <td>Módulo de inventario en ITSM o ERP. Registro de entradas y salidas por área.</td>
+          <td>Soporte TI</td>
+        </tr>
+        <tr>
+          <td><b>4</b></td>
+          <td><b>Deficiencias críticas en seguridad informática</b><br><span style="color:#64748b;font-size:.75rem">Sin políticas, antivirus sin gestión central, red plana</span></td>
+          <td>Seguridad · Todos los depts.</td>
+          <td style="text-align:center">5</td><td style="text-align:center">5</td>
+          <td style="text-align:center"><span class="score score-crit">25</span></td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>GAP analysis de seguridad. Antivirus centralizado, segmentación de red, política de contraseñas y capacitación obligatoria.</td>
+          <td>Jefe TI / CISO</td>
+        </tr>
+        <tr>
+          <td><b>5</b></td>
+          <td><b>ERP deficiente con altos costos de licenciamiento</b><br><span style="color:#64748b;font-size:.75rem">Bajo rendimiento y costos no justificados</span></td>
+          <td>Finanzas / Operaciones / TI</td>
+          <td style="text-align:center">4</td><td style="text-align:center">5</td>
+          <td style="text-align:center"><span class="score score-crit">20</span></td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>Evaluación de alternativas (Odoo open-source). ROI formal. Renegociación con proveedor actual.</td>
+          <td>Gerencia / TI</td>
+        </tr>
+        <tr>
+          <td><b>6</b></td>
+          <td><b>Sin planes de contingencia (BCP/DRP)</b><br><span style="color:#64748b;font-size:.75rem">Servicios críticos caídos sin protocolo de respuesta</span></td>
+          <td>Continuidad del Negocio</td>
+          <td style="text-align:center">4</td><td style="text-align:center">5</td>
+          <td style="text-align:center"><span class="score score-crit">20</span></td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>Elaborar BCP y DRP. Definir RTO y RPO. Simulacros semestrales.</td>
+          <td>Jefe TI / Gerencia</td>
+        </tr>
+        <tr>
+          <td><b>7</b></td>
+          <td><b>Equipos críticos sin UPS (respaldo eléctrico)</b><br><span style="color:#64748b;font-size:.75rem">Servidores y equipos clave sin protección ante cortes</span></td>
+          <td>Infraestructura / Operaciones</td>
+          <td style="text-align:center">3</td><td style="text-align:center">5</td>
+          <td style="text-align:center"><span class="score score-high">15</span></td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>Inventariar equipos críticos. Adquirir UPS con monitoreo remoto por SNMP.</td>
+          <td>Infraestructura TI</td>
+        </tr>
+        <tr>
+          <td><b>8</b></td>
+          <td><b>Trazabilidad deficiente del inventario de equipos</b><br><span style="color:#64748b;font-size:.75rem">Sin CMDB actualizada ni etiquetado QR/código de barras</span></td>
+          <td>Activos TI / Administración</td>
+          <td style="text-align:center">3</td><td style="text-align:center">3</td>
+          <td style="text-align:center"><span class="score score-med">9</span></td>
+          <td style="text-align:center"><span class="badge badge-med">Medio</span></td>
+          <td>Levantamiento con etiquetado QR. Implementar CMDB integrada al ITSM.</td>
+          <td>Soporte TI</td>
+        </tr>
+        <tr>
+          <td><b>9</b></td>
+          <td><b>Escasa capacitación en Microsoft 365</b><br><span style="color:#64748b;font-size:.75rem">Baja adopción de Teams, SharePoint, OneDrive y herramientas colaborativas</span></td>
+          <td>Gestión del Conocimiento / RRHH</td>
+          <td style="text-align:center">4</td><td style="text-align:center">3</div></td>
+          <td style="text-align:center"><span class="score score-high">12</span></td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>Plan de capacitación trimestral. Tutoriales internos. Métricas de adopción en Microsoft Admin Center.</td>
+          <td>TI / RRHH</td>
+        </tr>
+        <tr>
+          <td><b>10</b></td>
+          <td><b>Software Microsoft sin licencias originales (cracks)</b><br><span style="color:#64748b;font-size:.75rem">Riesgo legal, malware y exposición de datos corporativos</span></td>
+          <td>Legal / Seguridad / Cumplimiento</td>
+          <td style="text-align:center">4</td><td style="text-align:center">5</td>
+          <td style="text-align:center"><span class="score score-crit">20</span></td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>Auditoría SAM inmediata. Migración a licencias M365 Business o alternativas open-source. Bloquear instalaciones no autorizadas.</td>
+          <td>Jefe TI / Legal</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+</div>
+
+<!-- HEATMAP -->
+<div class="section-wrap">
+<section id="heatmap" class="fade-in">
+  <div class="section-title"><span class="icon">🗺️</span> Mapa de Calor de Riesgo</div>
+  <div class="section-sub">Distribución visual de los 10 riesgos identificados según Probabilidad vs Impacto</div>
+  <div style="display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start">
+    <div class="heatmap-wrap" style="flex:0 0 auto">
+      <div class="heatmap-title">Probabilidad (eje Y) × Impacto (eje X)</div>
+      <div class="heatmap-grid">
+        <!-- Row 5 (Prob=5) -->
+        <div class="hm-label-y">5</div>
+        <div class="hm-cell" style="background:#fde68a;color:#92400e">5</div>
+        <div class="hm-cell" style="background:#fed7aa;color:#9a3412">10</div>
+        <div class="hm-cell" style="background:#fca5a5;color:#991b1b">15</div>
+        <div class="hm-cell" style="background:#ef4444;color:#fff"><b>20 ②</b></div>
+        <div class="hm-cell" style="background:#dc2626;color:#fff"><b>25 ④</b></div>
+        <!-- Row 4 (Prob=4) -->
+        <div class="hm-label-y">4</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">4</div>
+        <div class="hm-cell" style="background:#fde68a;color:#92400e">8</div>
+        <div class="hm-cell" style="background:#fed7aa;color:#9a3412">12</div>
+        <div class="hm-cell" style="background:#fca5a5;color:#991b1b"><b>16 ①</b></div>
+        <div class="hm-cell" style="background:#ef4444;color:#fff"><b>20 ⑤⑥⑩</b></div>
+        <!-- Row 3 (Prob=3) -->
+        <div class="hm-label-y">3</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">3</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">6</div>
+        <div class="hm-cell" style="background:#fde68a;color:#92400e"><b>9 ③⑧</b></div>
+        <div class="hm-cell" style="background:#fed7aa;color:#9a3412">12</div>
+        <div class="hm-cell" style="background:#fca5a5;color:#991b1b"><b>15 ⑦</b></div>
+        <!-- Row 2 (Prob=2) -->
+        <div class="hm-label-y">2</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">2</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">4</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">6</div>
+        <div class="hm-cell" style="background:#fde68a;color:#92400e">8</div>
+        <div class="hm-cell" style="background:#fed7aa;color:#9a3412">10</div>
+        <!-- Row 1 (Prob=1) -->
+        <div class="hm-label-y">1</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">1</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">2</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">3</div>
+        <div class="hm-cell" style="background:#d1fae5;color:#065f46">4</div>
+        <div class="hm-cell" style="background:#fde68a;color:#92400e">5</div>
+        <!-- X labels -->
+        <div></div>
+        <div class="hm-label-x">1</div>
+        <div class="hm-label-x">2</div>
+        <div class="hm-label-x">3</div>
+        <div class="hm-label-x">4</div>
+        <div class="hm-label-x">5</div>
+      </div>
+      <div style="margin-top:10px;text-align:center;font-size:.7rem;color:var(--text2)">→ Impacto</div>
+    </div>
+    <div style="flex:1;min-width:260px">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:12px">Leyenda de Riesgos</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:.8rem">
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#dc2626;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">④</span><span><b>Seguridad Informática</b> — Score 25 (Crítico)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#ef4444;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">②</span><span><b>ISP / Internet</b> — Score 20 (Crítico)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#ef4444;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">⑤</span><span><b>ERP Deficiente</b> — Score 20 (Crítico)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#ef4444;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">⑥</span><span><b>Sin BCP/DRP</b> — Score 20 (Crítico)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#ef4444;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">⑩</span><span><b>Cracks Microsoft</b> — Score 20 (Crítico)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#fca5a5;color:#991b1b;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">①</span><span><b>Sin Sistema Tickets</b> — Score 16 (Crítico)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#fca5a5;color:#991b1b;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">⑦</span><span><b>Sin UPS</b> — Score 15 (Alto)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#fed7aa;color:#9a3412;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">⑨</span><span><b>Capacitación M365</b> — Score 12 (Alto)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#fde68a;color:#92400e;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">③</span><span><b>Sin trazab. insumos</b> — Score 9 (Medio)</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="background:#fde68a;color:#92400e;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;flex-shrink:0">⑧</span><span><b>Inventario TI defic.</b> — Score 9 (Medio)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ROADMAP -->
+<div class="section-wrap alt">
+<section id="roadmap" class="fade-in">
+  <div class="section-title"><span class="icon">🗓️</span> Roadmap de Implementación TI 2025–2026</div>
+  <div class="section-sub">Plan de acción por trimestres priorizando los riesgos críticos y altos identificados</div>
+  <div class="roadmap-grid">
+    <div class="rm-quarter">
+      <div class="rm-header">
+        <div class="q-num">Q1</div>
+        Abr – Jun 2025 · Acción Inmediata
+      </div>
+      <div class="rm-body">
+        <div class="rm-item crit"><strong>🔐 Auditoría de Seguridad (GAP)</strong>Diagnóstico completo de brechas de seguridad en todos los departamentos. Inventario de dispositivos vulnerables.<span class="rm-tag crit">Crítico</span></div>
+        <div class="rm-item crit"><strong>⚖️ Auditoría SAM – Licencias Microsoft</strong>Identificar equipos con software pirata. Iniciar proceso de regularización legal y migración a M365 original.<span class="rm-tag crit">Crítico</span></div>
+        <div class="rm-item crit"><strong>📡 Enlace ISP Redundante</strong>Cotizar y contratar enlace secundario con failover automático. Instalar sistema de monitoreo de red.<span class="rm-tag crit">Crítico</span></div>
+        <div class="rm-item high"><strong>🎫 Plataforma ITSM (Tickets)</strong>Seleccionar e instalar herramienta de gestión de incidencias. Capacitar a todos los departamentos en su uso.<span class="rm-tag high">Alto</span></div>
+      </div>
+    </div>
+    <div class="rm-quarter">
+      <div class="rm-header">
+        <div class="q-num">Q2</div>
+        Jul – Sep 2025 · Prioridad Alta
+      </div>
+      <div class="rm-body">
+        <div class="rm-item crit"><strong>🛡️ Implementar Política de Seguridad TI</strong>Antivirus centralizado, segmentación de red VLAN, política de contraseñas y MFA para M365.<span class="rm-tag crit">Crítico</span></div>
+        <div class="rm-item crit"><strong>🔌 Adquisición e Instalación de UPS</strong>Inventariar equipos críticos. Comprar e instalar UPS con monitoreo remoto SNMP en equipos prioritarios.<span class="rm-tag crit">Crítico</span></div>
+        <div class="rm-item high"><strong>📚 Plan de Capacitación M365</strong>Capacitación obligatoria en Teams, SharePoint, OneDrive y Outlook para los 52 usuarios activos.<span class="rm-tag high">Alto</span></div>
+        <div class="rm-item crit"><strong>📋 Elaboración BCP / DRP</strong>Documentar plan de continuidad del negocio y recuperación ante desastres con RTO y RPO definidos.<span class="rm-tag crit">Crítico</span></div>
+      </div>
+    </div>
+    <div class="rm-quarter">
+      <div class="rm-header">
+        <div class="q-num">Q3</div>
+        Oct – Dic 2025 · Consolidación
+      </div>
+      <div class="rm-body">
+        <div class="rm-item high"><strong>📦 Sistema de Trazabilidad de Insumos</strong>Implementar módulo de inventario de periféricos (tóner, cartuchos). Control de entradas y salidas por área.<span class="rm-tag high">Alto</span></div>
+        <div class="rm-item high"><strong>🏷️ CMDB – Inventario de Activos TI</strong>Etiquetado QR/código de barras de todos los equipos. Integración con plataforma ITSM.<span class="rm-tag high">Alto</span></div>
+        <div class="rm-item crit"><strong>💼 Evaluación ERP alternativo</strong>Análisis ROI de migración a Odoo u otro ERP. Presentación a Gerencia con propuesta de ahorro.<span class="rm-tag crit">Crítico</span></div>
+        <div class="rm-item med"><strong>🔄 Simulacro BCP/DRP</strong>Primer simulacro de continuidad con registros y mejoras identificadas.<span class="rm-tag med">Medio</span></div>
+      </div>
+    </div>
+    <div class="rm-quarter">
+      <div class="rm-header">
+        <div class="q-num">Q4</div>
+        Ene – Mar 2026 · Madurez
+      </div>
+      <div class="rm-body">
+        <div class="rm-item med"><strong>📊 KPIs y Reportería TI</strong>Dashboard de métricas desde el ITSM. Reportes mensuales a Gerencia (SLA, incidencias, disponibilidad).<span class="rm-tag med">Medio</span></div>
+        <div class="rm-item high"><strong>🎓 Capacitación Avanzada M365</strong>Segundo ciclo de capacitación. Medir adopción con métricas del Microsoft Admin Center.<span class="rm-tag high">Alto</span></div>
+        <div class="rm-item med"><strong>🔍 Auditoría de Seguridad Post-Implementación</strong>Evaluación del nivel de madurez en seguridad informática. Ajustes y nuevas acciones según hallazgos.<span class="rm-tag med">Medio</span></div>
+        <div class="rm-item low"><strong>✅ Revisión y Cierre del Plan</strong>Informe final de avance. Presentación de resultados a Gerencia. Inicio del plan TI 2026–2027.<span class="rm-tag low">Bajo</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- INVENTARIOS -->
+<div class="section-wrap">
+<section id="inventario" class="fade-in">
+  <div class="section-title"><span class="icon">💻</span> Inventario Tecnológico</div>
+  <div class="section-sub">Registro actualizado de equipos computacionales asignados en Lavel Maquinaria</div>
+
+  <div class="inv-tabs">
+    <button class="tab-btn active" onclick="showTab('pcs')">🖥️ PCs y Notebooks (77)</button>
+    <button class="tab-btn" onclick="showTab('phones')">📱 Celulares Inventario (45)</button>
+    <button class="tab-btn" onclick="showTab('users')">👤 Usuarios M365 (52)</button>
+  </div>
+
+  <!-- TAB PCs -->
+  <div id="tab-pcs" class="tab-content active">
+    <div class="inv-search">
+      <input type="text" id="search-pcs" placeholder="🔍  Buscar por usuario, modelo, área..." oninput="filterTable('pcs')">
+      <span id="count-pcs">77 registros</span>
+    </div>
+    <div class="inv-table-wrap">
+      <table class="inv-tbl" id="tbl-pcs">
+        <thead><tr>
+          <th>Tipo</th><th>Marca</th><th>Modelo</th><th>RAM</th><th>Disco</th>
+          <th>Disponible</th><th>Usuario Asignado</th><th>Centro de Costos</th><th>Precio</th>
+        </tr></thead>
+        <tbody><tr><td>Netbook</td><td>Aspire</td><td>One D270</td><td>2 GB</td><td>HDD 500 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Operativo (sin actualización)</td><td>Sin centro de costos</td><td>$49.990</td></tr>
+<tr><td>Netbook</td><td>Aspire</td><td>One D270</td><td>2 GB</td><td>HDD 500 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Operativo (sin actualización)</td><td>Sin centro de costos</td><td>$49.990</td></tr>
+<tr><td>Netbook</td><td>Aspire</td><td>One D270</td><td>2 GB</td><td>HDD 500 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Operativo (sin actualización)</td><td>Sin centro de costos</td><td>$49.990</td></tr>
+<tr><td>Netbook</td><td>Aspire</td><td>One D270</td><td>2 GB</td><td>HDD 500 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Operativo (sin actualización)</td><td>Sin centro de costos</td><td>$49.990</td></tr>
+<tr><td>Netbook</td><td>Aspire</td><td>One D270</td><td>2 GB</td><td>HDD 500 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Operativo (sin actualización)</td><td>Sin centro de costos</td><td>$49.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>-</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Alvaro Sepulveda</td><td>Oficina Central</td><td>$1.199.990</td></tr>
+<tr><td>Notebook</td><td>Samsung</td><td>950XEE</td><td>16 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Andres Diaz</td><td>Oficina Central</td><td>$497.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>fl1015la</td><td>4 GB</td><td>SSD 256 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Bastian Caceres</td><td>Pavimentos</td><td>$399.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>240 G7</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Carlos Aguilera</td><td>Oficina Central</td><td>$269.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-dy2xxx</td><td>8 GB</td><td>SSD M.2 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Cristian Arraño</td><td>Llanos 3</td><td>$3.369.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>fd001</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Cristian Richards</td><td>Oficina Central</td><td>$476.978</td></tr>
+<tr><td>Notebook</td><td>LENOVO</td><td>82XQ</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Daniela Almendares</td><td>Llanos 3</td><td>$369.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>TUF A16</td><td>16 GB</td><td>SSD 1 TB</td><td><span class="tag-disp tag-no">No</span></td><td>Dino Bacigalupo</td><td>Oficina Central</td><td>$1.144.190</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>250 G7</td><td>4 GB</td><td>SSD M2 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Eduardo Soto</td><td>Maquinarias</td><td>$299.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook 15</td><td>12 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Enrique Bastias</td><td>Oficina Central</td><td>$420.160</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-fc0xxx</td><td>16 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Exequiel Rojas</td><td>Maquinarias</td><td>$649.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-fd0010la</td><td>8 GB</td><td>512 GB SSD</td><td><span class="tag-disp tag-no">No</span></td><td>Felipe Cáceres</td><td>Oficina Central</td><td>$346.546</td></tr>
+<tr><td>Notebook</td><td>LENOVO</td><td>IdeaPad Slim 3</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Felipe Opazo</td><td>Oficina Central</td><td>$487.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 14</td><td>8 GB</td><td>SSD 256 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Flavio Moreira</td><td>Oficina Central</td><td>$336.126</td></tr>
+<tr><td>Notebook</td><td>Dell</td><td>Inspiron 3493</td><td>8 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Francisco Celis</td><td>Maquinarias</td><td>$587.989</td></tr>
+<tr><td>Notebook</td><td>Lenovo</td><td>82C4</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Francisco Celis – GeoRadar</td><td>Maquinarias</td><td>$399.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 14 E1404</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Gerardo Garrido</td><td>Oficina Central</td><td>$423.989</td></tr>
+<tr><td>Notebook</td><td>Acer</td><td>Aspire A515-43</td><td>4 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Jorge Opazo</td><td>Pavimentos</td><td>$399.990</td></tr>
+<tr><td>Notebook</td><td>LENOVO</td><td>Legion 82JK</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>José Dubó</td><td>MIRA</td><td>$799.990</td></tr>
+<tr><td>Notebook</td><td>DELL</td><td>Inspiron 15 3520</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Jose Villalobos</td><td>Oficina Central</td><td>$569.989</td></tr>
+<tr><td>Notebook</td><td>DELL</td><td>Inspiron 15 3520</td><td>16 GB</td><td>SSD M.2 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Juan Pablo Hinojosa</td><td>Oficina Central</td><td>$699.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-fd0XXX</td><td>8 GB</td><td>512 GB SSD</td><td><span class="tag-disp tag-no">No</span></td><td>Karen Villegas</td><td>Oficina Central</td><td>$346.546</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook X1605ZA</td><td>16 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Lenn Gonzalez</td><td>Maquinarias</td><td>$546.389</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 14</td><td>8 GB</td><td>512 GB SSD</td><td><span class="tag-disp tag-no">No</span></td><td>Marco Tapia</td><td>Oficina Central</td><td>$420.160</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-dyXXX</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Niels Briones</td><td>Maquinarias</td><td>$659.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-bw</td><td>4 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>No operativo</td><td>Sin centro de costos</td><td>$259.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>240</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>No operativo</td><td>Sin centro de costos</td><td>$199.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>14-ac</td><td>–</td><td>–</td><td><span class="tag-disp tag-no">No</span></td><td>No operativo</td><td>Sin centro de costos</td><td>$0</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-rf1015la</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Oscar Aguilar</td><td>Oficina Central</td><td>$85.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-dy2xxx</td><td>8 GB</td><td>SSD M.2 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Pablo Cuello</td><td>Oficina Central</td><td>$59.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>14-dq1xxx</td><td>8 GB</td><td>SSD M.2 1 TB</td><td><span class="tag-disp tag-no">No</span></td><td>Pablo Urtubia</td><td>Oficina Central</td><td>$139.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 15</td><td>8 GB</td><td>512 GB SSD</td><td><span class="tag-disp tag-no">No</span></td><td>Pía García</td><td>Truck Shop</td><td>$451.293</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>250 G6</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Practicante Contabilidad</td><td>Oficina Central</td><td>$449.990</td></tr>
+<tr><td>Notebook</td><td>DELL</td><td>Inspiron 15 3520</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Rodrigo Maturana</td><td>Oficina Central</td><td>$569.989</td></tr>
+<tr><td>Notebook</td><td>LENOVO</td><td>IdeaPad Slim 3</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Romina Jara</td><td>Emergencias</td><td>$449.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 14 E1404</td><td>8 GB</td><td>SSD 256 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Ronny Rubilar</td><td>Truck Shop</td><td>$319.319</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>250 G6</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Saul Manquez</td><td>Oficina Central</td><td>$379.990</td></tr>
+<tr><td>Notebook</td><td>HP</td><td>15-fd0010la</td><td>8 GB</td><td>512 GB SSD</td><td><span class="tag-disp tag-yes">Sí</span></td><td>Sin Asignación</td><td>Oficina Central</td><td>$346.546</td></tr>
+<tr><td>Notebook</td><td>LENOVO</td><td>IdeaPad Slim 3</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-yes">Sí</span></td><td>Sin Asignación</td><td>Oficina Central</td><td>$449.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 14</td><td>8 GB</td><td>SSD 256 GB</td><td><span class="tag-disp tag-yes">Sí</span></td><td>Sin Asignación</td><td>Oficina Central</td><td>$319.319</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook X415EA</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-yes">Sí</span></td><td>Sin Asignación</td><td>Oficina Central</td><td>$449.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 15</td><td>16 GB</td><td>512 GB SSD</td><td><span class="tag-disp tag-no">No</span></td><td>Yuri Guerrero</td><td>Oficina Central</td><td>$54.990</td></tr>
+<tr><td>Notebook</td><td>Asus</td><td>Vivobook Go 14</td><td>8 GB</td><td>SSD 256 GB</td><td><span class="tag-disp tag-yes">Sí</span></td><td>Computador Libre</td><td>–</td><td>$336.126</td></tr>
+<tr><td>Notebook</td><td>Lenovo</td><td>82C4</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Sin Asignación</td><td>Oficina Central</td><td>$399.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Valentina Bastias</td><td>Maquinarias</td><td>$168.990</td></tr>
+<tr><td>PC Escritorio</td><td>Gear</td><td>–</td><td>16 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>DESPACHO</td><td>Emergencias</td><td>$243.990</td></tr>
+<tr><td>PC Escritorio</td><td>Gear</td><td>–</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Elizabeth Garin</td><td>Emergencias</td><td>$199.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Marillyn Villarroel</td><td>Oficina Central</td><td>$149.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Informática</td><td>Oficina Central</td><td>$349.990</td></tr>
+<tr><td>PC Escritorio</td><td>Gear</td><td>–</td><td>8 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Lenn Gonzalez – Planta Asfalto</td><td>Maquinarias</td><td>$379.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Jonathan Mujica</td><td>Oficina Central</td><td>$149.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Francisco Hernandez</td><td>Oficina Central</td><td>$149.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Josefa Pizarro</td><td>Oficina Central</td><td>$252.092</td></tr>
+<tr><td>PC Escritorio</td><td>Gear</td><td>–</td><td>8 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Mary Rangel Suarez</td><td>Oficina Central</td><td>$149.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Fernanda Garces</td><td>Oficina Central</td><td>$157.990</td></tr>
+<tr><td>PC Escritorio</td><td>MyShop</td><td>Study and Work</td><td>16 GB</td><td>SSD M.2 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Leonardo Flores Rojas</td><td>Llanos 3</td><td>$310.916</td></tr>
+<tr><td>PC Escritorio</td><td>MyShop</td><td>Study and Work</td><td>16 GB</td><td>SSD M.2 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Maria Araujo</td><td>Llanos 3</td><td>$310.916</td></tr>
+<tr><td>PC Escritorio</td><td>MyShop</td><td>Study and Work</td><td>16 GB</td><td>SSD M.2 512 GB</td><td><span class="tag-disp tag-yes">Sí</span></td><td>Kheylin Lopez</td><td>Llanos 3</td><td>$310.916</td></tr>
+<tr><td>PC Escritorio</td><td>Asus</td><td>–</td><td>8 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>No operativo</td><td>Oficina Central</td><td>$265.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Manuel Muñoz / Franco Flores</td><td>Maquinarias</td><td>$139.990</td></tr>
+<tr><td>PC Escritorio</td><td>MyShop</td><td>Study and Work</td><td>16 GB</td><td>SSD 1 TB</td><td><span class="tag-disp tag-no">No</span></td><td>Cristian Arraño – ITO 1</td><td>Llanos 3</td><td>$93.990</td></tr>
+<tr><td>PC Escritorio</td><td>MyShop</td><td>Study and Work</td><td>16 GB</td><td>SSD 1 TB</td><td><span class="tag-disp tag-no">No</span></td><td>Cristian Arraño – ITO 2</td><td>Llanos 3</td><td>$179.990</td></tr>
+<tr><td>PC Escritorio</td><td>MyShop</td><td>Study and Work</td><td>16 GB</td><td>SSD M.2 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Rodrigo Araos</td><td>Oficina Central</td><td>$252.092</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 480 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Flavia Espoz</td><td>Pavimentos</td><td>$169.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Romina Rojas</td><td>Oficina Central</td><td>$149.990</td></tr>
+<tr><td>PC Escritorio</td><td>Gear</td><td>–</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Makarena Araya</td><td>Oficina Central</td><td>$149.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 240 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Gonzalo Morales</td><td>Maquinarias</td><td>$168.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>8 GB</td><td>SSD 512 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Alejandra Guerra</td><td>Maquinarias</td><td>$299.990</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>–</td><td>–</td><td><span class="tag-disp tag-no">No</span></td><td>No operativo</td><td>Sin centro de costos</td><td>$0</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>4 GB</td><td>SSD 216 GB</td><td><span class="tag-disp tag-no">No</span></td><td>Sebastian Garcia</td><td>Oficina Central</td><td>–</td></tr>
+<tr><td>PC Escritorio</td><td>–</td><td>–</td><td>–</td><td>–</td><td><span class="tag-disp tag-no">No</span></td><td>No operativo</td><td>Sin centro de costos</td><td>$0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB PHONES -->
+  <div id="tab-phones" class="tab-content">
+    <div class="inv-search">
+      <input type="text" id="search-phones" placeholder="🔍  Buscar por usuario, modelo, área..." oninput="filterTable('phones')">
+      <span id="count-phones">45 registros</span>
+    </div>
+    <div class="inv-table-wrap">
+      <table class="inv-tbl" id="tbl-phones">
+        <thead><tr>
+          <th>Marca</th><th>Modelo</th><th>Código Lavel</th><th>Disponible</th>
+          <th>Usuario Asignado</th><th>Centro de Costos</th><th>Precio</th>
+        </tr></thead>
+        <tbody><tr><td>Xiaomi</td><td>Redmi A3 128GB Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C01052025</td><td><span class="tag-disp tag-no">No</span></td><td>Leixon Chiriguayo</td><td>Maquinarias</td><td>$79.990</td></tr>
+<tr><td>Samsung</td><td>A8 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C01092025</td><td><span class="tag-disp tag-no">No</span></td><td>Maria Jose Bugueño</td><td>Truck Shop</td><td>$74.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 14C 256GB Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C01102025</td><td><span class="tag-disp tag-no">No</span></td><td>Lorena Peñailillo</td><td>Oficina Central</td><td>$109.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 15C 256GB Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C02122025</td><td><span class="tag-disp tag-no">No</span></td><td>RRHH</td><td>Oficina Central</td><td>$109.990</td></tr>
+<tr><td>Samsung</td><td>A8 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C05032025</td><td><span class="tag-disp tag-no">No</span></td><td>Josefa Pizarro</td><td>Oficina Central</td><td>$74.990</td></tr>
+<tr><td>Xiaomi</td><td>A3 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C08032023</td><td><span class="tag-disp tag-no">No</span></td><td>Jose Galdames Sepulveda</td><td>MIRA</td><td>$74.990</td></tr>
+<tr><td>Samsung</td><td>A8 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C10022023</td><td><span class="tag-disp tag-no">No</span></td><td>Jonathan Mujica</td><td>Oficina Central</td><td>$74.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C10092024</td><td><span class="tag-disp tag-no">No</span></td><td>Jose Paillacar</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C117052024</td><td><span class="tag-disp tag-no">No</span></td><td>Haider Galvez</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Samsung</td><td>A8 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C12022023</td><td><span class="tag-disp tag-no">No</span></td><td>Daniel Hernandez</td><td>Oficina Central</td><td>$74.990</td></tr>
+<tr><td>Xiaomi</td><td>A8 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C12032024</td><td><span class="tag-disp tag-no">No</span></td><td>Flavia Espoz</td><td>Pavimentos</td><td>$74.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C12072023</td><td><span class="tag-disp tag-no">No</span></td><td>Sebastian Rojo</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 14C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C12112025</td><td><span class="tag-disp tag-no">No</span></td><td>Gilbert Camacho / Ariel Aira</td><td>Emergencias</td><td>$109.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 14 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C121120252</td><td><span class="tag-disp tag-no">No</span></td><td>Manlio Cortes / Andres Abarca</td><td>Emergencias</td><td>$109.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C13022023</td><td><span class="tag-disp tag-no">No</span></td><td>Jorge Opazo</td><td>Pavimentos</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C13082024</td><td><span class="tag-disp tag-no">No</span></td><td>José Galdames / Álvaro Aguirre</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C14052025</td><td><span class="tag-disp tag-no">No</span></td><td>Paolo Saavedra</td><td>Maquinarias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C15032024</td><td><span class="tag-disp tag-no">No</span></td><td>Justo Zenteno</td><td>Programado</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C15052024</td><td><span class="tag-disp tag-no">No</span></td><td>Carlos Zasmay / Fabian Mallega</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C15062024</td><td><span class="tag-disp tag-no">No</span></td><td>Jean Pinto</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C15092024</td><td><span class="tag-disp tag-no">No</span></td><td>Jose Monsalvez</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C17042024</td><td><span class="tag-disp tag-no">No</span></td><td>Jose Peso</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C17052025</td><td><span class="tag-disp tag-no">No</span></td><td>Bastian Caceres</td><td>Pavimentos</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C19082024</td><td><span class="tag-disp tag-no">No</span></td><td>Victor Fernandez</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>A3 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C23052023</td><td><span class="tag-disp tag-no">No</span></td><td>Cristian Arraño</td><td>Oficina Central</td><td>$69.990</td></tr>
+<tr><td>Xiaomi</td><td>A3 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C2502023</td><td><span class="tag-disp tag-no">No</span></td><td>Pedro Navarro</td><td>Pavimentos</td><td>$69.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C25062023</td><td><span class="tag-disp tag-no">No</span></td><td>Juan Ortuya</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C25082024</td><td><span class="tag-disp tag-no">No</span></td><td>John Cutiño / Oreste Vatas</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C25102024</td><td><span class="tag-disp tag-no">No</span></td><td>Marcial Alarcon / Carlos Orellana</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C26072024</td><td><span class="tag-disp tag-no">No</span></td><td>DESPACHO</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C27082024</td><td><span class="tag-disp tag-no">No</span></td><td>Jean Rojas</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>A3 Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C27082025</td><td><span class="tag-disp tag-no">No</span></td><td>Ángel Cardones / Vicente Saavedra</td><td>Pavimentos</td><td>$69.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C270820252</td><td><span class="tag-disp tag-no">No</span></td><td>Pascual Marca Flores</td><td>Pavimentos</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C270820253</td><td><span class="tag-disp tag-no">No</span></td><td>Eulogio Camacho Tercero</td><td>Pavimentos</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 14C 256GB Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C29082025</td><td><span class="tag-disp tag-no">No</span></td><td>Albert Quiroga / Sebastián Alarcón</td><td>Emergencias</td><td>$139.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C29102024</td><td><span class="tag-disp tag-no">No</span></td><td>Nibaldo Quiroga</td><td>Emergencias</td><td>$69.990</td></tr>
+<tr><td>Xiaomi</td><td>Redmi 13C Black</td><td style='font-size:.73rem;color:#475569'>Lavel_C29112024</td><td><span class="tag-disp tag-no">No</span></td><td>Pablo Zenteno</td><td>Programado</td><td>$109.990</td></tr>
+<tr><td>Galaxy</td><td>Z Fold 5</td><td style='font-size:.73rem;color:#475569'>Lavel_C23012023</td><td><span class="tag-disp tag-no">No</span></td><td>Alvaro Sepulveda</td><td>Oficina Central</td><td>$879.990</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_001</td><td><span class="tag-disp tag-no">No</span></td><td>Maria Alejandra Sepulveda</td><td>Oficina Central</td><td>$0</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_002</td><td><span class="tag-disp tag-no">No</span></td><td>Monserrat Sepulveda</td><td>Oficina Central</td><td>$0</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_003</td><td><span class="tag-disp tag-no">No</span></td><td>Silvia Velarde</td><td>Oficina Central</td><td>$0</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_004</td><td><span class="tag-disp tag-no">No</span></td><td>Silvia Lamas</td><td>Oficina Central</td><td>$0</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_005</td><td><span class="tag-disp tag-no">No</span></td><td>Diego Hinojosa</td><td>Oficina Central</td><td>$0</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_006</td><td><span class="tag-disp tag-no">No</span></td><td>Portón J.J. Vallejos</td><td>Oficina Central</td><td>$0</td></tr>
+<tr><td>SOLO CHIP</td><td>SOLO CHIP</td><td style='font-size:.73rem;color:#475569'>Lavel_007</td><td><span class="tag-disp tag-no">No</span></td><td>Línea Disponible</td><td>Oficina Central</td><td>$0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB USERS -->
+  <div id="tab-users" class="tab-content">
+    <div class="inv-search">
+      <input type="text" id="search-users" placeholder="🔍  Buscar por nombre, cargo, área..." oninput="filterTable('users')">
+      <span id="count-users">52 registros</span>
+    </div>
+    <div class="inv-table-wrap">
+      <table class="inv-tbl" id="tbl-users">
+        <thead><tr>
+          <th>N°</th><th>Nombre</th><th>Correo M365</th><th>Cargo</th><th>Área / Centro de Costos</th>
+        </tr></thead>
+        <tbody><tr><td><b>1</b></td><td>Abel Alonso Rojo Rios</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a3b283530351a363b2c3f36743936">[email&#160;protected]</a></td><td>Jefe de área</td><td>Gestión de personas</td></tr>
+<tr><td><b>2</b></td><td>Alejandra Guerra Araya</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="78191f0d1d0a0a193814190e1d14561b14">[email&#160;protected]</a></td><td>–</td><td>Maquinarias</td></tr>
+<tr><td><b>3</b></td><td>Alexis Estay</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7c6c2d4d3c6dee7cbc6d1c2cb89c4cb">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Truck Shop</td></tr>
+<tr><td><b>4</b></td><td>Alonso Rebeco Chavez</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e8899a8d8a8d8b87a884899e8d84c68b84">[email&#160;protected]</a></td><td>–</td><td>Oficina Central</td></tr>
+<tr><td><b>5</b></td><td>Alvaro Blanco Nuñez</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bcddded0ddd2dfd3fcd0ddcad9d092dfd0">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Programados / Emergencias</td></tr>
+<tr><td><b>6</b></td><td>Andres Diaz Contreras</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="21404548405b614d4057444d0f424d">[email&#160;protected]</a></td><td>Tesorero</td><td>Contabilidad</td></tr>
+<tr><td><b>7</b></td><td>Bastian Caceres Medina</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1c7e7f7d7f796e796f5c707d6a7970327f70">[email&#160;protected]</a></td><td>–</td><td>Pavimentos</td></tr>
+<tr><td><b>8</b></td><td>Carlos Aguilera</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2a494b4d5f43464f584b6a464b5c4f46044946">[email&#160;protected]</a></td><td>Jefe de área</td><td>Prevención de Riesgos</td></tr>
+<tr><td><b>9</b></td><td>Carlos Rojas</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dab9a8b5b0bba99ab6bbacbfb6f4b9b6">[email&#160;protected]</a></td><td>–</td><td>Practicante Contabilidad</td></tr>
+<tr><td><b>10</b></td><td>Catalina Astudillo</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="274446545352434e4b4b48674b4651424b09444b">[email&#160;protected]</a></td><td>–</td><td>Oficina Central</td></tr>
+<tr><td><b>11</b></td><td>Catalina Donaire</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="197a7d767778706b7c5975786f7c75377a75">[email&#160;protected]</a></td><td>–</td><td>Oficina Central</td></tr>
+<tr><td><b>12</b></td><td>Claudio Abarca Aguirre</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb989a999a89989abb979a8d9e97d59897">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Calles Copiapó</td></tr>
+<tr><td><b>13</b></td><td>Cristian Arraño Veas</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1f7c7e6d6d7e71705f737e697a73317c73">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Llanos 3</td></tr>
+<tr><td><b>14</b></td><td>Cristian Richards Grez</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bad9c8d3d9d2c8dec9fad6dbccdfd694d9d6">[email&#160;protected]</a></td><td>Gerente de Área</td><td>Gcia Gestión y Desarrollos</td></tr>
+<tr><td><b>15</b></td><td>Daniela Almendares Vielma</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7c3c6cbcac2c9c3c6d5c2d4e7cbc6d1c2cb89c4cb">[email&#160;protected]</a></td><td>–</td><td>Llanos 3</td></tr>
+<tr><td><b>16</b></td><td>Dino Bacigalupo</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="67030506040e00060b121708270b0611020b49040b">[email&#160;protected]</a></td><td>Arquitecto</td><td>Oficina Central</td></tr>
+<tr><td><b>17</b></td><td>Josefa Campillay</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7a10191b170a1316161b033a161b0c1f16541916">[email&#160;protected]</a></td><td>Analista Gestión de Personas</td><td>Oficina Central</td></tr>
+<tr><td><b>18</b></td><td>DISPONIBLE</td><td style='font-size:.75rem;color:#475569'>–</td><td>–</td><td>DISPONIBLE</td></tr>
+<tr><td><b>19</b></td><td>DISPONIBLE</td><td style='font-size:.75rem;color:#475569'>–</td><td>–</td><td>DISPONIBLE</td></tr>
+<tr><td><b>20</b></td><td>Elimaher Zarraga</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc99869d8e8e9d9b9dbc909d8a9990d29f90">[email&#160;protected]</a></td><td>–</td><td>Emergencias</td></tr>
+<tr><td><b>21</b></td><td>Enrique Bastias</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8aefe8ebf9fee3ebf9cae6ebfcefe6a4e9e6">[email&#160;protected]</a></td><td>Gerente de Área</td><td>Gerente Administración y Finanzas</td></tr>
+<tr><td><b>22</b></td><td>Felipe Caceres Ulloa</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2c4a4f4d4f495e495f6c404d5a4940024f40">[email&#160;protected]</a></td><td>–</td><td>RRHH</td></tr>
+<tr><td><b>23</b></td><td>Flavio Moreira</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbbdb6b4a9beb2a9ba9bb7baadbeb7f5b8b7">[email&#160;protected]</a></td><td>–</td><td>Contabilidad</td></tr>
+<tr><td><b>24</b></td><td>Francisco Celis Fernandez</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b4d484e4742586b474a5d4e47054847">[email&#160;protected]</a></td><td>Gerente de Área</td><td>Maquinarias</td></tr>
+<tr><td><b>25</b></td><td>Francisco Hernandez Estay</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="096f616c7b6768676d6c734965687f6c65276a65">[email&#160;protected]</a></td><td>Ayudante de bodega</td><td>Bodega</td></tr>
+<tr><td><b>26</b></td><td>Gerardo Garrido Garcia</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6700000615150e0308270b0611020b49040b">[email&#160;protected]</a></td><td>–</td><td>Emergencia</td></tr>
+<tr><td><b>27</b></td><td>Gonzalo Morales Naur</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aacdc7c5d8cbc6cfd9eac6cbdccfc684c9c6">[email&#160;protected]</a></td><td>–</td><td>Maquinarias</td></tr>
+<tr><td><b>28</b></td><td>Jim Lee Mancilla Diaz</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="13797e727d707a7f7f72537f7265767f3d707f">[email&#160;protected]</a></td><td>–</td><td>Maquinarias</td></tr>
+<tr><td><b>29</b></td><td>Jonathan Mujica Maluenda</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2a4945475a584b596a464b5c4f46044946">[email&#160;protected]</a></td><td>–</td><td>Compras</td></tr>
+<tr><td><b>30</b></td><td>Jose Dubo Estay</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6f050b1a0d002f030e190a03410c03">[email&#160;protected]</a></td><td>Administrador de obra</td><td>MIRA</td></tr>
+<tr><td><b>31</b></td><td>Juan Pablo Hinojosa Usaj</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bbd1cbd3d2d5d4d1d4c8dafbd7dacdded795d8d7">[email&#160;protected]</a></td><td>Gerente de Área</td><td>Gerencia General</td></tr>
+<tr><td><b>32</b></td><td>Lenn Gonzalez Medrano</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93fff4fcfde9f2fff6e9d3fff2e5f6ffbdf0ff">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Maquinarias</td></tr>
+<tr><td><b>33</b></td><td>Leonardo Flores Rojas</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3e525852514c5b4d7e525f485b52105d52">[email&#160;protected]</a></td><td>Ayudante de bodega</td><td>Llanos 3</td></tr>
+<tr><td><b>34</b></td><td>Lorena Peñailillo Medina</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cfaebca6bcbbaca0a1bbaeada6a3a6abaeab8fa3aeb9aaa3e1aca3">[email&#160;protected]</a></td><td>–</td><td>Analista Proveedores</td></tr>
+<tr><td><b>35</b></td><td>Marco Tapia</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d3bea7b2a3bab293bfb2a5b6bffdb0bf">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Jefe de Operaciones</td></tr>
+<tr><td><b>36</b></td><td>Mary Rangel</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="771a0516191610121b371b1601121b59141b">[email&#160;protected]</a></td><td>Ayudante de bodega</td><td>Compras</td></tr>
+<tr><td><b>37</b></td><td>Mauricio Mayanes Bustamante</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bed3d3dfc7dfd0dbcdfed2dfc8dbd290ddd2">[email&#160;protected]</a></td><td>–</td><td>Enc. Planificador y Control Obra – Maquinarias</td></tr>
+<tr><td><b>38</b></td><td>Niels Briones</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82ece0f0ebedece7f1c2eee3f4e7eeace1ee">[email&#160;protected]</a></td><td>Jefe de área</td><td>Jefe de Rental – Maquinarias</td></tr>
+<tr><td><b>39</b></td><td>Oscar Aguilar Gordillo</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="533c3234263a3f3221133f3225363f7d303f">[email&#160;protected]</a></td><td>–</td><td>Analista de Contabilidad</td></tr>
+<tr><td><b>40</b></td><td>Pablo Cuello Campusano</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f7879482929b9b98b79b9681929bd9949b">[email&#160;protected]</a></td><td>Jefe de área</td><td>Encargado de Compras</td></tr>
+<tr><td><b>41</b></td><td>Pablo Urtubia Muñoz</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f48481868081969d95b49895829198da9798">[email&#160;protected]</a></td><td>–</td><td>Estudios</td></tr>
+<tr><td><b>42</b></td><td>Paula Díaz Aravena</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4d3d29242c370d212c3b2821632e21">[email&#160;protected]</a></td><td>–</td><td>Compras – Rental</td></tr>
+<tr><td><b>43</b></td><td>Ricardo Fuentes</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="84f6e2f1e1eaf0e1f7c4e8e5f2e1e8aae7e8">[email&#160;protected]</a></td><td>Oficina técnica</td><td>Operaciones</td></tr>
+<tr><td><b>44</b></td><td>Rodrigo Araos</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ffdeefdeee0fccfe3eef9eae3a1ece3">[email&#160;protected]</a></td><td>–</td><td>Operaciones</td></tr>
+<tr><td><b>45</b></td><td>Rodrigo Maturana Fuentes</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="deacb3bfaaabacbfb0bf9eb2bfa8bbb2f0bdb2">[email&#160;protected]</a></td><td>Gerente de Área</td><td>Operaciones</td></tr>
+<tr><td><b>46</b></td><td>Romina Jara Acevedo</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d2f373c2f3c1d313c2b3831733e31">[email&#160;protected]</a></td><td>Oficina técnica</td><td>Oficina Técnica – Emergencia y Programados</td></tr>
+<tr><td><b>47</b></td><td>Romina Rojas Bugueño</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2a585845404b596a464b5c4f46044946">[email&#160;protected]</a></td><td>–</td><td>RRHH</td></tr>
+<tr><td><b>48</b></td><td>Saul Manquez Larrondo</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="07746a66697672627d476b6671626b29646b">[email&#160;protected]</a></td><td>–</td><td>Jefe de Administración y Finanzas</td></tr>
+<tr><td><b>49</b></td><td>Sebastian Garcia Michea</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0f7c686e7d6c666e4f636e796a63216c63">[email&#160;protected]</a></td><td>–</td><td>Calles Copiapó</td></tr>
+<tr><td><b>50</b></td><td>Sebastian Pineda Ibacache</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f5c5f46414a4b4e6f434e594a43014c43">[email&#160;protected]</a></td><td>Administrador de obra</td><td>Punitaqui</td></tr>
+<tr><td><b>51</b></td><td>Verocina Osorio</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f68493959386959f9998b69a9780939ad8959a">[email&#160;protected]</a></td><td>–</td><td>Recepción</td></tr>
+<tr><td><b>52</b></td><td>Yuri Guerrero Ahumada</td><td style='font-size:.75rem;color:#475569'><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0b726c7e6e79796e79644b676a7d6e67256867">[email&#160;protected]</a></td><td>–</td><td>Control Obras</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- LICENCIAS -->
+<div class="section-wrap alt">
+<section id="licencias" class="fade-in">
+  <div class="section-title"><span class="icon">🔑</span> Estado de Licencias Microsoft 365</div>
+  <div class="section-sub">Resumen del estado actual de licenciamiento en Lavel Maquinaria – Datos al cierre del período</div>
+  <div class="cards-row" style="max-width:900px">
+    <div class="card orange"><div class="c-label">Licencias M365 Totales</div><div class="c-val">85</div><div class="c-sub">Contratadas actualmente</div></div>
+    <div class="card blue"><div class="c-label">Usuarios que Necesitan</div><div class="c-val">0</div><div class="c-sub">Requieren licencia M365</div></div>
+    <div class="card yellow"><div class="c-label">Licencias Activas</div><div class="c-val">85</div><div class="c-sub">En uso actualmente</div></div>
+    <div class="card red"><div class="c-label">Déficit de Licencias</div><div class="c-val">-2</div><div class="c-sub">Faltan 2 licencias M365</div></div>
+    <div class="card green"><div class="c-label">Licencias Exchange</div><div class="c-val">21</div><div class="c-sub">Activas / 21 contratadas</div></div>
+    <div class="card navy"><div class="c-label">Exchange Sobrante</div><div class="c-val">0</div><div class="c-sub">Licencia Exchange sin uso</div></div>
+  </div>
+  <div style="background:#fff;border-radius:14px;padding:24px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);max-width:900px">
+    <div style="font-family:'Montserrat',sans-serif;font-weight:700;color:var(--navy);margin-bottom:16px;font-size:.95rem">⚠️ Alertas de Cumplimiento</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:.85rem">
+      <div style="background:var(--crit-bg);border:1px solid #fca5a5;border-radius:8px;padding:12px 14px;border-left:4px solid var(--crit)">
+        <b style="color:var(--crit)">🚨 SOFTWARE SIN LICENCIA (CRACKS):</b> Se han detectado equipos con instalaciones de Microsoft Office/Windows no originales. Esto representa un riesgo legal (Ley 17.336 de Propiedad Intelectual) y un vector de entrada de malware. <b>Acción requerida: auditoría SAM inmediata.</b>
+      </div>
+      <div style="background:var(--high-bg);border:1px solid #fdba74;border-radius:8px;padding:12px 14px;border-left:4px solid var(--high)">
+        <b style="color:var(--high)">⚠️ DÉFICIT DE LICENCIAS M365:</b> Se requieren 2 licencias adicionales de Microsoft 365 para cubrir a todos los usuarios que las necesitan. Gestionar adquisición en el período inmediato.
+      </div>
+      <div style="background:var(--med-bg);border:1px solid #fde047;border-radius:8px;padding:12px 14px;border-left:4px solid var(--med)">
+        <b style="color:var(--med)">📋 LICENCIA PROJECT SIN REVISAR:</b> Existen asignaciones de licencias de Microsoft Project que requieren validación. Confirmar necesidad real por usuario antes de renovar.
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- LÍNEAS CELULARES -->
+<div class="section-wrap">
+<section id="celulares" class="fade-in">
+  <div class="section-title"><span class="icon">📡</span> Líneas Telefónicas Activas – Marzo 2026</div>
+  <div class="section-sub">47 líneas activas distribuidas por Centro de Costos. Plan Entel 2404 Emp. Extra SIM – Cargo fijo $18.479/línea</div>
+  <div class="cards-row" style="max-width:800px;margin-bottom:28px">
+    <div class="card red"><div class="c-label">Emergencias</div><div class="c-val">19</div><div class="c-sub">40% del total de líneas</div></div>
+    <div class="card blue"><div class="c-label">Oficina Central</div><div class="c-val">15</div><div class="c-sub">32% del total</div></div>
+    <div class="card yellow"><div class="c-label">Pavimentos</div><div class="c-val">7</div><div class="c-sub">15% del total</div></div>
+    <div class="card navy"><div class="c-label">Maquinaria</div><div class="c-val">2</div><div class="c-sub">+ 2 Programado</div></div>
+    <div class="card green"><div class="c-label">Costo Total Estimado</div><div class="c-val" style="font-size:1.3rem">$347K</div><div class="c-sub">Mensual aprox. 47 líneas</div></div>
+  </div>
+  <div style="background:#fff;border-radius:14px;padding:20px 24px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06)">
+    <div style="font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:14px">Distribución por Centro de Costos</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">Emergencias</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:40%;background:var(--crit);height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">19</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">40%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">Oficina Central</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:32%;background:var(--blue-light);height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">15</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">32%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">Pavimentos</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:15%;background:var(--med);height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">7</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">15%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">Maquinaria</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:4%;background:var(--navy);height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">2</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">4%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">Programado</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:4%;background:#7c3aed;height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">2</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">4%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">Truck Shop – Candelaria</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:2%;background:var(--low);height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">1</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">2%</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:160px;font-size:.82rem;color:var(--text2);font-weight:500">MIRA</div>
+        <div style="flex:1;background:var(--gray2);border-radius:20px;height:20px;overflow:hidden">
+          <div style="width:2%;background:#0891b2;height:100%;border-radius:20px;transition:width .6s"></div>
+        </div>
+        <div style="width:30px;text-align:right;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem">1</div>
+        <div style="width:34px;font-size:.75rem;color:var(--text2)">2%</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- MEDIDAS DE CONTINGENCIA -->
+<div class="section-wrap alt">
+<section id="contingencias" class="fade-in">
+  <div class="section-title"><span class="icon">🛡️</span> Medidas de Contingencia TI</div>
+  <div class="section-sub">Plan de respuesta ante incidentes críticos identificados en el diagnóstico. Protocolos detallados con responsables, plazos y flujos de acción.</div>
+
+  <!-- CARDS RESUMEN -->
+  <div class="cards-row" style="max-width:900px;margin-bottom:32px">
+    <div class="card red"><div class="c-label">Contingencias Críticas</div><div class="c-val">3</div><div class="c-sub">Acción inmediata ≤ 48 hrs</div></div>
+    <div class="card orange"><div class="c-label">Contingencias Altas</div><div class="c-val">4</div><div class="c-sub">Resolución ≤ 7 días</div></div>
+    <div class="card yellow"><div class="c-label">Contingencias Medias</div><div class="c-val">3</div><div class="c-sub">Plan en 30 días</div></div>
+    <div class="card green"><div class="c-label">Protocolos Definidos</div><div class="c-val">10</div><div class="c-sub">Con flujo y responsable</div></div>
+  </div>
+
+  <!-- MATRIZ DE CONTINGENCIAS -->
+  <div class="risk-table-wrap" style="margin-bottom:36px">
+    <table class="risk-tbl">
+      <thead>
+        <tr>
+          <th style="width:36px">N°</th>
+          <th>Escenario de Contingencia</th>
+          <th>Disparador / Causa</th>
+          <th style="text-align:center">Nivel</th>
+          <th>Acción Inmediata (0–4 hrs)</th>
+          <th>Acción de Recuperación (4–48 hrs)</th>
+          <th>Prevención Futura</th>
+          <th>Responsable</th>
+          <th style="text-align:center">RTO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>C1</b></td>
+          <td><b>Caída total del enlace de internet</b><br><span style="color:#64748b;font-size:.75rem">Pérdida de conectividad que afecta operaciones, M365, VPN y comunicaciones</span></td>
+          <td>Falla ISP / corte físico / saturación</td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>① Activar enlace 4G/LTE de respaldo en router. ② Notificar a gerencia y jefes de área. ③ Llamar a ISP para abrir ticket de incidente.</td>
+          <td>① Coordinar con ISP ETA de restauración. ② Si >2 hrs, habilitar hotspot corporativo para roles críticos. ③ Registrar duración y impacto en bitácora.</td>
+          <td>Contratar enlace secundario (4G empresarial o segundo ISP) con failover automático. Implementar Zabbix para alerta proactiva.</td>
+          <td>Infraestructura TI / Jefe TI</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--crit)">2 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C2</b></td>
+          <td><b>Brecha de seguridad / ransomware</b><br><span style="color:#64748b;font-size:.75rem">Infección por malware, cifrado de archivos o acceso no autorizado a sistemas</span></td>
+          <td>Phishing, USB malicioso, credenciales comprometidas, red plana sin segmentación</td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>① <b>Aislar equipo/s afectado/s de la red inmediatamente</b> (desconectar cable o deshabilitar Wi-Fi). ② No apagar el equipo. ③ Alertar a Jefe TI y gerencia.</td>
+          <td>① Identificar alcance de la infección. ② Restaurar desde backup verificado. ③ Cambiar contraseñas de todos los usuarios afectados. ④ Preservar evidencia para análisis forense.</td>
+          <td>Segmentación de red (VLANs). Antivirus centralizado con EDR. Política de contraseñas y MFA. Backups 3-2-1 verificados mensualmente. Capacitación obligatoria anti-phishing.</td>
+          <td>Jefe TI / CISO</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--crit)">4 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C3</b></td>
+          <td><b>Falla crítica de servidor / NAS</b><br><span style="color:#64748b;font-size:.75rem">Pérdida de acceso a datos compartidos, archivos o sistema central</span></td>
+          <td>Falla de disco, corrupción de datos, falla eléctrica sin UPS</td>
+          <td style="text-align:center"><span class="badge badge-crit">Crítico</span></td>
+          <td>① Verificar UPS y alimentación eléctrica. ② Evaluar si es falla de hardware o software. ③ Notificar a usuarios impactados.</td>
+          <td>① Si falla de disco: activar unidad de reemplazo (hot spare). ② Restaurar desde último backup válido. ③ Verificar integridad de datos restaurados.</td>
+          <td>Implementar RAID 5/6 en NAS. UPS con autonomía mínima 30 min. Backup automatizado offsite (nube + local). Monitoreo S.M.A.R.T de discos.</td>
+          <td>Infraestructura TI</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--crit)">4 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C4</b></td>
+          <td><b>Pérdida o robo de notebook corporativo</b><br><span style="color:#64748b;font-size:.75rem">Información sensible en equipos sin cifrado ni gestión remota</span></td>
+          <td>Robo, pérdida en terreno, olvido en vehículo</td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>① Deshabilitar credenciales M365 del usuario. ② Revocar acceso VPN. ③ Intentar wipe remoto si MDM está habilitado.</td>
+          <td>① Reportar a gerencia y Jefe TI. ② Documentar incidente (equipo, usuario, último acceso). ③ Asignar equipo de respaldo si disponible. ④ Denuncia policial si aplica.</td>
+          <td>Implementar Microsoft Intune o similar para MDM. Activar BitLocker en todos los notebooks. Política de uso aceptable de equipos fuera de oficina.</td>
+          <td>Soporte TI / RRHH</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--high)">24 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C5</b></td>
+          <td><b>Falla masiva de impresoras / periféricos</b><br><span style="color:#64748b;font-size:.75rem">Sin stock de tóner o falla simultánea de equipos de impresión</span></td>
+          <td>Agotamiento de insumos sin control de stock, falla de firmware</td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>① Identificar impresora alternativa en otra área. ② Enviar trabajos a impresión digital (PDF) si es posible. ③ Avisar al área afectada.</td>
+          <td>① Gestionar compra de emergencia de tóner. ② Llamar a servicio técnico autorizado si es falla de equipo.</td>
+          <td>Implementar control de stock de insumos en ITSM. Mantener 1 tóner de repuesto por impresora activa. Revisar contrato de mantenimiento preventivo.</td>
+          <td>Soporte TI / Adm.</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--high)">8 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C6</b></td>
+          <td><b>Caída de servicios Microsoft 365</b><br><span style="color:#64748b;font-size:.75rem">Indisponibilidad de Teams, Outlook, SharePoint u otras apps cloud</span></td>
+          <td>Incidente en datacenter de Microsoft / mantenimiento no planificado</td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>① Verificar estado en portal status.microsoft.com. ② Comunicar a usuarios que es falla externa. ③ Activar canal alterno (WhatsApp corporativo o correo local).</td>
+          <td>① Monitorear restauración en portal oficial. ② Evaluar impacto en tareas críticas del día. ③ Reagendar reuniones o entregas si aplica.</td>
+          <td>Documentar procedimientos clave en modo offline. Considerar canal de comunicación alterno permanente. Revisar SLA de Microsoft 365 ante incidentes.</td>
+          <td>Jefe TI / Usuarios</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--high)">N/A ext.</td>
+        </tr>
+        <tr>
+          <td><b>C7</b></td>
+          <td><b>Corte de energía eléctrica</b><br><span style="color:#64748b;font-size:.75rem">Apagón que afecta equipos sin UPS y servidores</span></td>
+          <td>Falla eléctrica en instalaciones, corte de suministro externo</td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>① Verificar si UPS mantiene equipos críticos activos. ② Guardar trabajo en equipos con batería. ③ Evaluar duración estimada del corte.</td>
+          <td>① Si >15 min: apagar servidores de forma ordenada. ② Avisar a gerencia y áreas. ③ Contactar a empresa eléctrica.</td>
+          <td>Instalar UPS en rack de servidores y puntos críticos. Revisar circuitos con electricista certificado. Considerar generador para faenas en terreno.</td>
+          <td>Infraestructura TI / Mantención</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--high)">1 hr</td>
+        </tr>
+        <tr>
+          <td><b>C8</b></td>
+          <td><b>Compromiso de credenciales de usuario</b><br><span style="color:#64748b;font-size:.75rem">Contraseña filtrada, cuenta comprometida en M365 o sistema interno</span></td>
+          <td>Phishing, reutilización de contraseñas, filtración de datos</td>
+          <td style="text-align:center"><span class="badge badge-high">Alto</span></td>
+          <td>① Deshabilitar cuenta comprometida de inmediato en M365. ② Revocar tokens de sesión activos. ③ Informar al usuario afectado.</td>
+          <td>① Restablecer contraseña y habilitar MFA. ② Revisar actividad de la cuenta en últimos 7 días. ③ Verificar si se accedió a datos sensibles.</td>
+          <td>Implementar MFA obligatorio para todos los usuarios. Política de contraseñas complejas y rotación 90 días. Capacitación anti-phishing semestral.</td>
+          <td>Jefe TI / Soporte</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--high)">2 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C9</b></td>
+          <td><b>Falla de línea telefónica crítica (emergencias)</b><br><span style="color:#64748b;font-size:.75rem">Indisponibilidad de líneas asignadas a emergencias o faenas</span></td>
+          <td>Falla de red Entel, SIM bloqueada, equipo dañado</td>
+          <td style="text-align:center"><span class="badge badge-med">Medio</span></td>
+          <td>① Contactar a Entel para diagnóstico. ② Asignar línea de respaldo temporal desde pool disponible.</td>
+          <td>① Gestionar reemplazo de SIM o equipo dañado. ② Documentar incidente en registro de líneas.</td>
+          <td>Mantener 2 SIM de respaldo en bodega TI. Revisar cobertura por zona de operación. Evaluar plan de datos adicionales para emergencias.</td>
+          <td>TI / Adm. Contratos</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--med)">4 hrs</td>
+        </tr>
+        <tr>
+          <td><b>C10</b></td>
+          <td><b>Licencias de software vencidas o insuficientes</b><br><span style="color:#64748b;font-size:.75rem">Usuarios bloqueados de M365, Project u otras herramientas</span></td>
+          <td>Falta de gestión de renovaciones, usuarios nuevos sin licencia</td>
+          <td style="text-align:center"><span class="badge badge-med">Medio</span></td>
+          <td>① Verificar disponibilidad de licencias no asignadas. ② Reasignar temporalmente si es posible.</td>
+          <td>① Gestionar compra de licencias adicionales con proveedor. ② Evaluar migración de usuario a plan inferior si aplica.</td>
+          <td>Crear calendario de vencimientos en ITSM. Revisar asignaciones trimestralmente. Mantener 10% de licencias de buffer sobre demanda real.</td>
+          <td>Jefe TI / Adm.</td>
+          <td style="text-align:center;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--med)">24 hrs</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FLUJO DE RESPUESTA A INCIDENTES -->
+  <div style="background:#fff;border-radius:16px;padding:28px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:28px">
+    <div style="font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:6px">📋 Flujo General de Respuesta a Incidentes</div>
+    <div style="color:var(--text2);font-size:.82rem;margin-bottom:20px">Protocolo estándar aplicable a cualquier contingencia TI en Lavel Maquinaria</div>
+    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center">
+      <!-- Paso 1 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:140px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--crit),#b91c1c);display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(220,38,38,.3)">🚨</div>
+        <div style="text-align:center">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;color:var(--crit)">DETECCIÓN</div>
+          <div style="font-size:.72rem;color:var(--text2);text-align:center;line-height:1.4">Usuario/monitor detecta el incidente</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:24px;max-width:40px;height:2px;background:linear-gradient(90deg,var(--crit),var(--high));margin-bottom:28px"></div>
+      <!-- Paso 2 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:140px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--high),#c2410c);display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(234,88,12,.3)">📢</div>
+        <div style="text-align:center">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;color:var(--high)">NOTIFICACIÓN</div>
+          <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Comunicar a Jefe TI y gerencia</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:24px;max-width:40px;height:2px;background:linear-gradient(90deg,var(--high),var(--med));margin-bottom:28px"></div>
+      <!-- Paso 3 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:140px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--med),#a16207);display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(202,138,4,.3)">🔍</div>
+        <div style="text-align:center">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;color:var(--med)">DIAGNÓSTICO</div>
+          <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Identificar causa raíz y alcance</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:24px;max-width:40px;height:2px;background:linear-gradient(90deg,var(--med),var(--blue-light));margin-bottom:28px"></div>
+      <!-- Paso 4 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:140px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--blue-light),var(--navy));display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(37,99,235,.3)">⚙️</div>
+        <div style="text-align:center">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;color:var(--blue-light)">CONTENCIÓN</div>
+          <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Aplicar acción inmediata del protocolo</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:24px;max-width:40px;height:2px;background:linear-gradient(90deg,var(--blue-light),var(--low));margin-bottom:28px"></div>
+      <!-- Paso 5 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:140px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--low),#15803d);display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(22,163,74,.3)">🔧</div>
+        <div style="text-align:center">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;color:var(--low)">RECUPERACIÓN</div>
+          <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Restaurar servicio y verificar</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:24px;max-width:40px;height:2px;background:linear-gradient(90deg,var(--low),#0891b2);margin-bottom:28px"></div>
+      <!-- Paso 6 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:120px;max-width:140px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#0891b2,var(--navy));display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(8,145,178,.3)">📝</div>
+        <div style="text-align:center">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.78rem;color:#0891b2">POST-MORTEM</div>
+          <div style="font-size:.72rem;color:var(--text2);line-height:1.4">Documentar y prevenir recurrencia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACTOS DE EMERGENCIA TI -->
+  <div style="background:#fff;border-radius:16px;padding:24px 28px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.07)">
+    <div style="font-family:'Montserrat',sans-serif;font-size:.95rem;font-weight:800;color:var(--navy);margin-bottom:16px">📞 Árbol de Escalamiento de Incidentes TI</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+      <div style="background:var(--crit-bg);border:1px solid #fca5a5;border-radius:10px;padding:14px 16px;border-left:4px solid var(--crit)">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.8rem;color:var(--crit);margin-bottom:6px">🥇 NIVEL 1 — Soporte TI (0–30 min)</div>
+        <div style="font-size:.78rem;color:var(--text);line-height:1.5">Primer respondedor. Atiende incidentes estándar: impresoras, credenciales, software, conectividad de usuario.</div>
+      </div>
+      <div style="background:var(--high-bg);border:1px solid #fdba74;border-radius:10px;padding:14px 16px;border-left:4px solid var(--high)">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.8rem;color:var(--high);margin-bottom:6px">🥈 NIVEL 2 — Jefe de TI (30 min–2 hrs)</div>
+        <div style="font-size:.78rem;color:var(--text);line-height:1.5">Escala si: impacto en múltiples usuarios, seguridad comprometida, servidores o conectividad core afectados.</div>
+      </div>
+      <div style="background:var(--med-bg);border:1px solid #fde047;border-radius:10px;padding:14px 16px;border-left:4px solid var(--med)">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.8rem;color:var(--med);margin-bottom:6px">🥉 NIVEL 3 — Gerencia + Proveedor (>2 hrs)</div>
+        <div style="font-size:.78rem;color:var(--text);line-height:1.5">Si RTO supera lo aceptable. Involucrar proveedor externo, ISP o Microsoft Support. Notificar a gerencia general.</div>
+      </div>
+      <div style="background:var(--low-bg);border:1px solid #86efac;border-radius:10px;padding:14px 16px;border-left:4px solid var(--low)">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.8rem;color:var(--low);margin-bottom:6px">✅ CIERRE — Documentación en ITSM</div>
+        <div style="font-size:.78rem;color:var(--text);line-height:1.5">Todo incidente debe quedar registrado con: causa, acciones tomadas, duración, impacto y medidas preventivas.</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- PROYECTOS FUTUROS -->
+<div class="section-wrap">
+<section id="proyectos" class="fade-in">
+  <div class="section-title"><span class="icon">🚀</span> Proyectos TI Futuros</div>
+  <div class="section-sub">Iniciativas estratégicas priorizadas para modernizar la infraestructura tecnológica de Lavel Maquinaria. Propuesta de tecnologías, fases y beneficios esperados.</div>
+
+  <!-- CARDS OVERVIEW -->
+  <div class="cards-row" style="max-width:900px;margin-bottom:36px">
+    <div class="card blue"><div class="c-label">Proyectos Planificados</div><div class="c-val">2</div><div class="c-sub">Alta prioridad estratégica</div></div>
+    <div class="card navy"><div class="c-label">Inversión Estimada Total</div><div class="c-val" style="font-size:1.3rem">~$4.2M</div><div class="c-sub">CLP aprox. primer año</div></div>
+    <div class="card green"><div class="c-label">Impacto Esperado</div><div class="c-val">Alto</div><div class="c-sub">Operacional + Seguridad</div></div>
+    <div class="card yellow"><div class="c-label">Plazo Total Estimado</div><div class="c-val">6M</div><div class="c-sub">Implementación escalonada</div></div>
+  </div>
+
+  <!-- PROYECTO 1: SISTEMA DE TICKETS -->
+  <div style="background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:32px;overflow:hidden">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,var(--navy) 0%,var(--blue-light) 100%);padding:24px 28px;color:#fff;display:flex;align-items:flex-start;gap:18px">
+      <div style="font-size:2.8rem;line-height:1">🎫</div>
+      <div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:4px">Proyecto 01 · Prioridad Crítica</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:1.45rem;font-weight:800;line-height:1.2">Sistema de Gestión de Tickets (ITSM)</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,.75);margin-top:6px">Plataforma centralizada para registro, seguimiento y resolución de solicitudes e incidentes TI</div>
+      </div>
+      <div style="margin-left:auto;text-align:right;flex-shrink:0">
+        <div style="font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase">Inversión estimada</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:1.4rem;font-weight:800;color:var(--accent)">$0 – $800K</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.6)">CLP/año (plan gratuito a premium)</div>
+      </div>
+    </div>
+
+    <div style="padding:28px">
+      <!-- Descripción -->
+      <div style="background:var(--gray);border-radius:10px;padding:16px 18px;margin-bottom:24px;border-left:4px solid var(--blue-light)">
+        <div style="font-size:.85rem;color:var(--text);line-height:1.6">Actualmente Lavel Maquinaria no cuenta con un sistema formal para registrar y dar seguimiento a solicitudes de soporte TI. Los requerimientos se gestionan por WhatsApp, teléfono o de manera verbal, lo que genera <b>pérdida de trazabilidad, duplicación de trabajo y ausencia de métricas</b>. Un sistema ITSM permitirá ordenar, priorizar y medir el servicio TI interno.</div>
+      </div>
+
+      <!-- Grid: Problema / Solución / Beneficios -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:24px">
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.8rem;color:var(--crit);margin-bottom:10px;display:flex;align-items:center;gap:6px">❌ Problemas Actuales</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--crit);font-size:.9rem">•</span> Sin trazabilidad de incidencias</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--crit);font-size:.9rem">•</span> Solicitudes perdidas o sin atender</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--crit);font-size:.9rem">•</span> Sin métricas de tiempo de respuesta</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--crit);font-size:.9rem">•</span> No hay priorización formal</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--crit);font-size:.9rem">•</span> Historial de incidentes inexistente</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.8rem;color:var(--low);margin-bottom:10px;display:flex;align-items:center;gap:6px">✅ Beneficios Esperados</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--low);font-size:.9rem">•</span> 100% de solicitudes registradas</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--low);font-size:.9rem">•</span> SLAs definidos y medidos</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--low);font-size:.9rem">•</span> Reportes de rendimiento TI</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--low);font-size:.9rem">•</span> Base de conocimiento de soluciones</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--low);font-size:.9rem">•</span> Satisfacción de usuarios medible</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.8rem;color:var(--navy);margin-bottom:10px">🛠️ Funcionalidades Clave</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--navy);font-size:.9rem">•</span> Portal de autoservicio para usuarios</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--navy);font-size:.9rem">•</span> Asignación automática por categoría</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--navy);font-size:.9rem">•</span> Notificaciones por email/Teams</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--navy);font-size:.9rem">•</span> Inventario integrado de activos</div>
+            <div style="font-size:.78rem;color:var(--text);display:flex;gap:8px;align-items:flex-start"><span style="color:var(--navy);font-size:.9rem">•</span> Dashboard y reportes ejecutivos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opciones de herramientas -->
+      <div style="margin-bottom:24px">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:var(--navy);margin-bottom:14px">💡 Herramientas Recomendadas</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+          <div style="border:2px solid var(--low);border-radius:10px;padding:14px 16px;background:var(--low-bg)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.82rem;color:var(--low);margin-bottom:4px">⭐ Zammad (Recomendado)</div>
+            <div style="font-size:.75rem;color:var(--text);line-height:1.5;margin-bottom:8px">Open source, auto-hospedado en servidor propio. Sin costo de licencias. Integración con M365 y Teams.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span style="background:var(--low);color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Gratuito</span>
+              <span style="background:var(--navy);color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Auto-hospedado</span>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:#fff">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.82rem;color:var(--blue-light);margin-bottom:4px">Freshdesk</div>
+            <div style="font-size:.75rem;color:var(--text);line-height:1.5;margin-bottom:8px">SaaS cloud. Plan gratuito hasta 10 agentes. Ideal para inicio rápido sin infraestructura.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span style="background:var(--low);color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Freemium</span>
+              <span style="background:#7c3aed;color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Cloud</span>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:#fff">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.82rem;color:var(--high);margin-bottom:4px">Jira Service Management</div>
+            <div style="font-size:.75rem;color:var(--text);line-height:1.5;margin-bottom:8px">Robusto, escalable. Gratuito hasta 3 agentes. Ideal si se planea crecer en equipo TI.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span style="background:var(--med);color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Freemium</span>
+              <span style="background:#0891b2;color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Atlassian</span>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;background:#fff">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.82rem;color:var(--navy);margin-bottom:4px">GLPI</div>
+            <div style="font-size:.75rem;color:var(--text);line-height:1.5;margin-bottom:8px">Open source con módulo de inventario de activos TI integrado. 100% gratuito, en servidor local.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span style="background:var(--low);color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Gratuito</span>
+              <span style="background:var(--navy);color:#fff;border-radius:10px;font-size:.65rem;font-weight:700;padding:2px 8px">Open Source</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fases de implementación -->
+      <div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:var(--navy);margin-bottom:14px">📅 Fases de Implementación (Sistema de Tickets)</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+          <div style="background:var(--crit-bg);border:1px solid #fca5a5;border-radius:10px;padding:14px;border-top:3px solid var(--crit)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--crit)">FASE 1 · Mes 1</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Selección e Instalación</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Evaluar herramientas, decidir plataforma, instalar y configurar servidor (si aplica).</div>
+          </div>
+          <div style="background:var(--high-bg);border:1px solid #fdba74;border-radius:10px;padding:14px;border-top:3px solid var(--high)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--high)">FASE 2 · Mes 2</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Configuración y Categorías</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Definir categorías, SLAs, flujos de aprobación y usuarios del sistema.</div>
+          </div>
+          <div style="background:var(--med-bg);border:1px solid #fde047;border-radius:10px;padding:14px;border-top:3px solid var(--med)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--med)">FASE 3 · Mes 3</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Piloto con TI</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Uso interno del equipo TI. Ajustes según feedback. Documentar procesos.</div>
+          </div>
+          <div style="background:var(--low-bg);border:1px solid #86efac;border-radius:10px;padding:14px;border-top:3px solid var(--low)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--low)">FASE 4 · Mes 4</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Despliegue General</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Capacitar a todos los usuarios. Activar portal de autoservicio. Comunicar proceso oficial.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROYECTO 2: CONTROL DE VEHÍCULOS -->
+  <div style="background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:28px;overflow:hidden">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1a4a2e 0%,var(--low) 100%);padding:24px 28px;color:#fff;display:flex;align-items:flex-start;gap:18px">
+      <div style="font-size:2.8rem;line-height:1">🚗</div>
+      <div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:4px">Proyecto 02 · Prioridad Alta</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:1.45rem;font-weight:800;line-height:1.2">Sistema de Control de Entrada y Salida de Vehículos</div>
+        <div style="font-size:.85rem;color:rgba(255,255,255,.75);margin-top:6px">Registro digital para el guardia de seguridad: control de acceso vehicular con bitácora, patentes y horarios</div>
+      </div>
+      <div style="margin-left:auto;text-align:right;flex-shrink:0">
+        <div style="font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase">Inversión estimada</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:1.4rem;font-weight:800;color:var(--accent)">$1.2M – $3.4M</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.6)">CLP (según nivel de automatización)</div>
+      </div>
+    </div>
+
+    <div style="padding:28px">
+      <!-- Descripción -->
+      <div style="background:#f0fdf4;border-radius:10px;padding:16px 18px;margin-bottom:24px;border-left:4px solid var(--low)">
+        <div style="font-size:.85rem;color:var(--text);line-height:1.6">Actualmente el registro de entrada y salida de vehículos se realiza de forma manual (cuaderno en papel), lo que genera <b>falta de trazabilidad, pérdida de registros históricos y ausencia de alertas</b> ante accesos no autorizados. Un sistema digital facilitará el trabajo del guardia, aumentará la seguridad perimetral y permitirá auditar el tráfico vehicular de la empresa.</div>
+      </div>
+
+      <!-- 3 niveles de implementación -->
+      <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:var(--navy);margin-bottom:14px">📊 Niveles de Implementación (de menor a mayor inversión)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:28px">
+
+        <!-- Nivel básico -->
+        <div style="border:2px solid var(--low);border-radius:12px;overflow:hidden">
+          <div style="background:var(--low);padding:12px 16px">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:#fff">🟢 NIVEL BÁSICO</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.85)">Formulario digital · ~$0 – $200K CLP</div>
+          </div>
+          <div style="padding:16px;background:var(--low-bg)">
+            <div style="font-size:.78rem;color:var(--text);line-height:1.55;margin-bottom:10px">App web o Google Forms personalizado. El guardia registra patente, conductor, hora de entrada/salida y motivo desde tablet o PC.</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Sin costo de licencias</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Implementación en 1–2 semanas</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Registros en Google Sheets o BD local</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--crit)">✗</span> Sin reconocimiento automático de patentes</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--crit)">✗</span> Requiere ingreso manual por el guardia</div>
+            </div>
+            <div style="margin-top:10px;padding:8px 10px;background:#fff;border-radius:6px;font-size:.75rem;color:var(--text2)"><b>Herramientas:</b> Google Workspace, Microsoft Power Apps, o desarrollo web simple (PHP/Laravel)</div>
+          </div>
+        </div>
+
+        <!-- Nivel intermedio -->
+        <div style="border:2px solid var(--med);border-radius:12px;overflow:hidden">
+          <div style="background:var(--med);padding:12px 16px">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:#fff">🟡 NIVEL INTERMEDIO</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.85)">Sistema web + QR/RFID · ~$800K – $1.8M CLP</div>
+          </div>
+          <div style="padding:16px;background:var(--med-bg)">
+            <div style="font-size:.78rem;color:var(--text);line-height:1.55;margin-bottom:10px">Sistema web desarrollado a medida o plataforma SaaS. Vehículos autorizados con tag RFID o código QR. Bitácora digital con fotos opcionales.</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Lectores RFID en portón de entrada</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Registro automático de vehículos habituales</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Alertas por vehículo no autorizado</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Reportes de frecuencia y horarios</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--crit)">✗</span> Requiere instalación de hardware</div>
+            </div>
+            <div style="margin-top:10px;padding:8px 10px;background:#fff;border-radius:6px;font-size:.75rem;color:var(--text2)"><b>Herramientas:</b> Raspberry Pi + RFID, plataformas como Parklio, Gatekeeper o desarrollo Laravel/Node.js</div>
+          </div>
+        </div>
+
+        <!-- Nivel avanzado -->
+        <div style="border:2px solid var(--blue-light);border-radius:12px;overflow:hidden">
+          <div style="background:var(--blue-light);padding:12px 16px">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:#fff">🔵 NIVEL AVANZADO</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.85)">LPR + Cámaras IA · ~$1.8M – $3.4M CLP</div>
+          </div>
+          <div style="padding:16px;background:#eff6ff">
+            <div style="font-size:.78rem;color:var(--text);line-height:1.55;margin-bottom:10px">Sistema LPR (License Plate Recognition) con cámaras IP que leen la patente automáticamente. Barrera automática opcional. Máxima seguridad y mínima intervención del guardia.</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Lectura automática de patentes (OCR/IA)</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Barrera automática integrable</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Grabación y archivo de video</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Integración con CCTV existente</div>
+              <div style="font-size:.75rem;color:var(--text);display:flex;gap:7px"><span style="color:var(--low)">✓</span> Alerta en tiempo real por patente desconocida</div>
+            </div>
+            <div style="margin-top:10px;padding:8px 10px;background:#fff;border-radius:6px;font-size:.75rem;color:var(--text2)"><b>Herramientas:</b> Milestone XProtect, Genetec, Hikvision ANPR, OpenALPR (open source)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flujo de uso para el guardia -->
+      <div style="background:var(--gray);border-radius:14px;padding:22px;margin-bottom:24px">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.88rem;color:var(--navy);margin-bottom:16px">👮 Flujo de Uso para el Guardia de Seguridad</div>
+        <div style="display:flex;align-items:flex-start;gap:0;flex-wrap:wrap;justify-content:flex-start">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px;max-width:120px">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.4rem">🚗</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text);font-weight:600;line-height:1.3">Vehículo llega a portón</div>
+          </div>
+          <div style="flex:1;min-width:16px;max-width:30px;height:2px;background:var(--navy);margin-top:26px;opacity:.4"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px;max-width:120px">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:1.4rem">📱</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text);font-weight:600;line-height:1.3">Guardia abre app o sistema</div>
+          </div>
+          <div style="flex:1;min-width:16px;max-width:30px;height:2px;background:var(--blue-light);margin-top:26px;opacity:.4"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px;max-width:120px">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--med);display:flex;align-items:center;justify-content:center;font-size:1.4rem">🔍</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text);font-weight:600;line-height:1.3">Ingresa o escanea patente</div>
+          </div>
+          <div style="flex:1;min-width:16px;max-width:30px;height:2px;background:var(--med);margin-top:26px;opacity:.4"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px;max-width:120px">
+            <div style="width:52px;height:52px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:1.4rem">📋</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text);font-weight:600;line-height:1.3">Registra conductor, área destino y motivo</div>
+          </div>
+          <div style="flex:1;min-width:16px;max-width:30px;height:2px;background:#7c3aed;margin-top:26px;opacity:.4"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px;max-width:120px">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--low);display:flex;align-items:center;justify-content:center;font-size:1.4rem">✅</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text);font-weight:600;line-height:1.3">Sistema valida y autoriza acceso</div>
+          </div>
+          <div style="flex:1;min-width:16px;max-width:30px;height:2px;background:var(--low);margin-top:26px;opacity:.4"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px;max-width:120px">
+            <div style="width:52px;height:52px;border-radius:50%;background:#0891b2;display:flex;align-items:center;justify-content:center;font-size:1.4rem">🚪</div>
+            <div style="text-align:center;font-size:.72rem;color:var(--text);font-weight:600;line-height:1.3">Salida registrada automáticamente</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fases de implementación -->
+      <div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.85rem;color:var(--navy);margin-bottom:14px">📅 Fases de Implementación (Control de Vehículos)</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+          <div style="background:var(--crit-bg);border:1px solid #fca5a5;border-radius:10px;padding:14px;border-top:3px solid var(--crit)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--crit)">FASE 1 · Mes 1–2</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Levantamiento y Diseño</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Definir nivel de implementación, levantar patentes autorizadas, diseñar flujo de registro.</div>
+          </div>
+          <div style="background:var(--high-bg);border:1px solid #fdba74;border-radius:10px;padding:14px;border-top:3px solid var(--high)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--high)">FASE 2 · Mes 2–3</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Desarrollo / Instalación</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Instalar hardware (si aplica), configurar software, cargar base de patentes y conductores.</div>
+          </div>
+          <div style="background:var(--med-bg);border:1px solid #fde047;border-radius:10px;padding:14px;border-top:3px solid var(--med)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--med)">FASE 3 · Mes 3–4</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Capacitación del Guardia</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Entrenar al guardia en uso del sistema. Período de operación paralela (papel + digital).</div>
+          </div>
+          <div style="background:var(--low-bg);border:1px solid #86efac;border-radius:10px;padding:14px;border-top:3px solid var(--low)">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.75rem;color:var(--low)">FASE 4 · Mes 5–6</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;margin:6px 0">Operación Total</div>
+            <div style="font-size:.75rem;color:var(--text2);line-height:1.4">Sistema 100% digital. Eliminar registro en papel. Activar alertas y reportes automáticos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA COMPARATIVA DE PROYECTOS -->
+  <div style="background:#fff;border-radius:14px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">
+    <div style="background:linear-gradient(90deg,var(--dark),var(--navy));padding:16px 24px">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:.95rem;color:#fff">📊 Resumen Comparativo de Proyectos</div>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="risk-tbl" style="min-width:700px">
+      <thead>
+        <tr>
+          <th>Proyecto</th>
+          <th>Prioridad</th>
+          <th>Inversión Estimada</th>
+          <th>Plazo</th>
+          <th>Impacto Principal</th>
+          <th>Riesgo si NO se implementa</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>🎫 Sistema de Tickets ITSM</b></td>
+          <td><span class="badge badge-crit">Crítica</span></td>
+          <td>$0 – $800K CLP/año</td>
+          <td>4 meses</td>
+          <td>Trazabilidad, SLAs, eficiencia TI</td>
+          <td>Incidencias sin registro, sin métricas, sin mejora continua</td>
+          <td><span class="badge badge-high">Por Iniciar</span></td>
+        </tr>
+        <tr>
+          <td><b>🚗 Control de Vehículos</b></td>
+          <td><span class="badge badge-high">Alta</span></td>
+          <td>$1.2M – $3.4M CLP</td>
+          <td>6 meses</td>
+          <td>Seguridad perimetral, auditoría</td>
+          <td>Accesos no registrados, responsabilidad ante incidentes, sin evidencia</td>
+          <td><span class="badge badge-high">Por Iniciar</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <span>Diagnóstico TI – Lavel Maquinaria</span> · Preparado por el área de Tecnología de la Información · 2025–2026<br>
+  Documento de uso interno · Confidencial
+</footer>
+
+<script>
+  // ── TAB SWITCHING ──────────────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.closest('.inv-tabs').dataset.group || btn.closest('section').id;
+      const target = btn.dataset.tab;
+      // deactivate siblings
+      btn.closest('.inv-tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // hide all tab-content in the same container
+      btn.closest('section, div').querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      const panel = document.getElementById(target);
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  // ── SEARCH / FILTER ─────────────────────────────────────────────
+  document.querySelectorAll('.inv-search input').forEach(input => {
+    input.addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      const panel = this.closest('.tab-content');
+      if (!panel) return;
+      const rows = panel.querySelectorAll('tbody tr');
+      let visible = 0;
+      rows.forEach(row => {
+        const match = row.textContent.toLowerCase().includes(q);
+        row.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      const counter = this.closest('.inv-search').querySelector('span');
+      if (counter) counter.textContent = visible + ' registros';
+    });
+    // init counter
+    const panel = input.closest('.tab-content');
+    if (panel) {
+      const rows = panel.querySelectorAll('tbody tr');
+      const counter = input.closest('.inv-search').querySelector('span');
+      if (counter) counter.textContent = rows.length + ' registros';
+    }
+  });
+
+  // ── SCROLL FADE-IN ANIMATION ────────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ── NAV ACTIVE STATE ON SCROLL ──────────────────────────────────
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const scrollSpy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const link = document.querySelector('nav a[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => scrollSpy.observe(s));
+</script>
+</body>
+</html>
